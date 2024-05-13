@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include "../include/parser.h"
+
+int main() {
+    char *input = "(a|b)*";
+    RegexNode *root = NULL;
+
+    if (parseRegularExpression(input, &root)) {
+        printf("Parsing successful!\n");
+    } else {
+        printf("Parsing failed!\n");
+    }
+
+    freeRegexTree(root); // Liberando a árvore após o uso
+
+    return 0;
+}

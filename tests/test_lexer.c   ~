@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include "../include/lexer.h"
+
+int main() {
+    char *input = "(a|b)*";
+
+    Token *tokens = getNextTokens(&input, 6); // Alterado o comprimento para 6
+
+    for (size_t i = 0; tokens[i].type != TOKEN_END; i++) {
+        switch (tokens[i].type) {
+            case TOKEN_CHAR:
+                printf("TOKEN_CHAR: %c\n", tokens[i].value);
+                break;
+            case TOKEN_OR:
+                printf("TOKEN_OR\n");
+                break;
+            case TOKEN_STAR:
+                printf("TOKEN_STAR\n");
+                break;
+            case TOKEN_PLUS:
+                printf("TOKEN_PLUS\n");
+                break;
+            case TOKEN_LEFT_PAREN:
+                printf("TOKEN_LEFT_PAREN\n");
+                break;
+            case TOKEN_RIGHT_PAREN:
+                printf("TOKEN_RIGHT_PAREN\n");
+                break;
+            case TOKEN_ERROR:
+                printf("TOKEN_ERROR\n");
+                break;
+            default:
+                printf("Unknown token\n");
+        }
+    }
+
+    free(tokens); // Liberando os tokens alocados dinamicamente
+
+    return 0;
+}

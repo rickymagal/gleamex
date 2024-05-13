@@ -1,0 +1,56 @@
+#include "../include/parser.h"
+#include "../include/lexer.h"
+#include <stdbool.h>
+#include <stdlib.h>
+
+struct RegexNodeStruct {
+    TokenType type;
+    char value;
+    struct RegexNodeStruct *left;
+    struct RegexNodeStruct *right;
+};
+
+RegexNode* createNode(TokenType type, char value) {
+    RegexNode* node = (RegexNode*)malloc(sizeof(RegexNode));
+    if (node != NULL) {
+        node->type = type;
+        node->value = value;
+        node->left = NULL;
+        node->right = NULL;
+    }
+    return node;
+}
+
+void freeRegexTree(RegexNode* root) {
+    if (root != NULL) {
+        freeRegexTree(root->left);
+        freeRegexTree(root->right);
+        free(root);
+    }
+}
+
+bool parseRegularExpression(char *input, RegexNode **root) {
+    Token *current_token = getNextToken(&input);
+
+    if (getTokenType(current_token) == TOKEN_LEFT_PAREN) {
+        current_token = getNextToken(&input); // Avança para o próximo token
+        if (parseRegularExpression(input, &((*root)->left))) {
+            current_token = getNextToken(&input); // Avança para o próximo token
+            if (getTokenType(current_token) == TOKEN_OR) {
+                current_token = getNextToken(&input); // Avança para o próximo token
+                if (parseRegularExpression(input, &((*root)->right))) {
+                    current_token = getNextToken(&input); // Avança para o próximo token
+                    if (getTokenType(current_token) == TOKEN_RIGHT_PAREN) {
+                        current_token = getNextToken(&input); // Avança para o próximo token
+                        return true;
+                    }
+                }
+            }
+        }
+    } else if (getTokenType(current_token) == TOKEN_CHAR) {
+        *root = createNode(getTokenType(current_token), getTokenValue(current_token));
+        current_token = getNextToken(&input); // Avança para o próximo token
+        return true;
+    }
+    return false;
+}

@@ -1,0 +1,33 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -pedantic -Iinclude
+SRCDIR = src
+OBJDIR = obj
+BINDIR = .
+
+SRCS = $(wildcard $(SRCDIR)/*.c)
+TEST_SRCS = $(wildcard tests/*.c)
+OBJS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+TEST_OBJS = $(patsubst tests/%.c,$(OBJDIR)/%.o,$(TEST_SRCS))
+
+EXECUTABLES = test_parser test_lexer
+
+.PHONY: all clean
+
+all: $(EXECUTABLES)
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	mkdir -p $(OBJDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: tests/%.c
+	mkdir -p $(OBJDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+test_parser: $(OBJS) $(OBJDIR)/test_parser.o
+	$(CC) $(CFLAGS) $^ -o $(BINDIR)/$@
+
+test_lexer: $(OBJS) $(TEST_OBJS)
+	$(CC) $(CFLAGS) $^ -o $(BINDIR)/$@
+
+clean:
+	rm -rf $(OBJDIR) $(BINDIR)/$(EXECUTABLES)
