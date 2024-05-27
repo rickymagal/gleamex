@@ -49,6 +49,10 @@ bool parseRegularExpression(char *input, RegexNode **root) {
                 // Parse recursively the left and right side of the expression
                 return parseRegularExpression(input, &((*root)->left->left)) &&
                        parseRegularExpression(input, &((*root)->right->left));
+            } else if (getTokenType(next_token) == TOKEN_STAR || getTokenType(next_token) == TOKEN_PLUS || getTokenType(next_token) == TOKEN_QUESTION) { // Quantifiers
+                (*root)->left = createNode(getTokenType(current_token), getTokenValue(current_token));
+                (*root)->type = getTokenType(next_token);
+                return true;
             } else if (getTokenType(next_token) == TOKEN_CHAR || getTokenType(next_token) == TOKEN_LEFT_PAREN) { // Concatenation Operator
                 (*root)->left = createNode(getTokenType(current_token), getTokenValue(current_token));
                 return parseRegularExpression(input, &((*root)->left->right));

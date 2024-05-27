@@ -8,6 +8,7 @@ typedef enum {
     TOKEN_OR,
     TOKEN_STAR,
     TOKEN_PLUS,
+    TOKEN_QUESTION, // Adicionado o operador "?"
     TOKEN_LEFT_PAREN,
     TOKEN_RIGHT_PAREN,
     TOKEN_CHAR,

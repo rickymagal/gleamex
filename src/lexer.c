@@ -25,6 +25,8 @@ Token *getNextToken(char **input) {
         token->type = TOKEN_STAR;
     } else if (currentChar == '+') {
         token->type = TOKEN_PLUS;
+    } else if (currentChar == '?') { // Adicionado o operador "?"
+        token->type = TOKEN_QUESTION;
     } else if (currentChar == '(') {
         token->type = TOKEN_LEFT_PAREN;
     } else if (currentChar == ')') {
@@ -41,7 +43,7 @@ Token *getNextToken(char **input) {
 }
 
 Token* getNextTokens(char **input, size_t length) {
-    Token *tokens = malloc((length + 1) * sizeof(Token)); // Adicionamos 1 para o token de fim
+    Token *tokens = malloc((length + 1) * sizeof(Token)); 
     Token *temp = tokens;
     while (**input != '\0') {
         *temp = *getNextToken(input);
@@ -50,6 +52,7 @@ Token* getNextTokens(char **input, size_t length) {
     temp->type = TOKEN_END;
     return tokens;
 }
+
 TokenType getTokenType(Token *token) {
     return token->type;
 }
