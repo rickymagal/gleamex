@@ -10,6 +10,8 @@ struct RegexNodeStruct {
     struct RegexNodeStruct *right;
 };
 
+//Auxiliary Functions for Manipulating the Regex Tree.
+
 RegexNode* createNode(TokenType type, char value) {
     RegexNode* node = (RegexNode*)malloc(sizeof(RegexNode));
     if (node != NULL) {
@@ -29,84 +31,127 @@ void freeRegexTree(RegexNode* root) {
     }
 }
 
-void freeNode(RegexNode* node){
+void freeRegexNode(RegexNode* node){
   free(node);
 }
 
-// This function parses a given Regular Expression. It builds a syntax tree and verifies 1. That each node in the tree has the correct amount of descendants (OR must have exactly two descendendants, * ? and + must have exactly one descendant, and characters must have no descendants 2. Each leaf node must be a character and 3. Each left parentheses has a matching right parentheses. The parenthesis Token is used implicitly in the logic: each "(" token starts a new group in the regex tree that is evaluated recursively until it encounters a right parenthesis.
+//The Following functions are used to construct a syntax tree for the given regular expression and use it to determine if the Regex is valid. 
 
+// It does this by verifying that
+// 1. Every node has the correct number of descendants (OR must have 2, quantifiers must have 1, characters none).
+// 2. At the end, the syntax tree must have all leaf nodes as characters.
+// 3. The number of left parentheses must match the number of right parentheses.
+//
+// Parentheses tokens are never added to the syntax tree. They are used implicitly to delimit expressions, which are parsed separately and added to the root if they are valid.
+
+//Main function
+bool parseRegularExpression(char *input, RegexNode **root);
+//parses terms separated by OR
+bool parseExpression(char **input, RegexNode **root);
+//parses a sequence of factors
+bool parseTerm(char **input, RegexNode **root);
+//parses a single factor
+bool parseFactor(char **input, RegexNode **root);
 
 bool parseRegularExpression(char *input, RegexNode **root) {
-    int parenthesesCounter = 0;
-    Token *current_token = getNextToken(&input);
-    Token *next_token = NULL;
-    bool success = false;
+    char *current = input;
 
-    if (current_token == NULL)
+    // Parse the expression starting from the current position
+    if (!parseExpression(&current, root)) {
         return false;
+    }
 
-    if (getTokenType(current_token) == TOKEN_CHAR) {
-        *root = createNode(getTokenType(current_token), getTokenValue(current_token));
-        success = true;
-        freeToken(current_token);
-    } else if (getTokenType(current_token) == TOKEN_LEFT_PAREN) {
-        parenthesesCounter++;
-        *root = NULL;
-        success = parseRegularExpression(input, root);
-        if (success) {
-            next_token = getNextToken(&input);
-            if (next_token != NULL && getTokenType(next_token) == TOKEN_RIGHT_PAREN) {
-                parenthesesCounter--;
-                freeToken(next_token);
-                next_token = getNextToken(&input);
-                if (next_token != NULL && getTokenType(next_token) != TOKEN_END) {
-                    if (getTokenType(next_token) == TOKEN_OR) {
-                        // Criar um novo nó OR e ajustar os ponteiros
-                        RegexNode *new_root = createNode(TOKEN_OR, '\0');
-                        new_root->left = *root;
-                        success = parseRegularExpression(input, &(new_root->right));
-                        *root = new_root;
-                    } else if (getTokenType(next_token) == TOKEN_STAR ||
-                               getTokenType(next_token) == TOKEN_PLUS ||
-                               getTokenType(next_token) == TOKEN_QUESTION) {
-                        // Aplicar o operador de quantificação ao nó atual
-                        if (*root != NULL) {
-                            (*root)->type = getTokenType(next_token);
-                            success = true;
-                        } else {
-                            // Criar um novo nó de caractere com o operador de quantificação
-                            *root = createNode(TOKEN_CHAR, '\0');
-                            (*root)->type = getTokenType(next_token);
-                            success = true;
-                        }
-                    } else if (getTokenType(next_token) == TOKEN_CHAR ||
-                               getTokenType(next_token) == TOKEN_LEFT_PAREN) {
-                        // Criar um novo nó de caractere e continuar a análise
-                        if (*root == NULL) {
-                            *root = createNode(TOKEN_CHAR, '\0');
-                            (*root)->left = createNode(getTokenType(current_token), getTokenValue(current_token));
-                            success = parseRegularExpression(input, &((*root)->left->right));
-                        } else {
-                            // Adicionar o novo nó de caractere à direita do nó atual
-                            (*root)->left = createNode(getTokenType(current_token), getTokenValue(current_token));
-                            success = parseRegularExpression(input, &((*root)->left->right));
-                        }
-                    }
-                    freeToken(next_token);
-                } else {
-                    success = true; // Chegou ao final da expressão regular
-                    freeToken(next_token);
-                }
-            } else {
-                freeToken(next_token);
-                success = false;
-            }
+    // If we haven't reached the end of the input, the expression is invalid
+    if (*current != '\0') {
+        return false;
+    }
+
+    return true;
+}
+
+
+bool parseExpression(char **input, RegexNode **root) {
+    if (!parseTerm(input, root)) {
+        return false;
+    }
+
+    while (**input == '|') {
+        (*input)++;
+        RegexNode *orNode = createNode(TOKEN_OR, '|');
+        orNode->left = *root;
+        if (!parseTerm(input, &(orNode->right))) {
+            freeRegexTree(orNode);
+            return false;
         }
-        freeToken(current_token);
+        *root = orNode;
     }
 
-    if (parenthesesCounter != 0 || !success) {
+    return true;
+}
+
+
+bool parseTerm(char **input, RegexNode **root) {
+    if (!parseFactor(input, root)) {
         return false;
     }
-    return success;
+
+    while (**input != '\0' && **input != '|' && **input != ')') {
+        RegexNode *concatNode = createNode(TOKEN_EMPTY, '\0');
+        concatNode->left = *root;
+        if (!parseFactor(input, &(concatNode->right))) {
+            freeRegexTree(concatNode);
+            return false;
+        }
+        *root = concatNode;
+    }
+
+    return true;
+}
+
+
+bool parseFactor(char **input, RegexNode **root) {
+    if (**input == '\0') {
+        return false;
+    }
+
+    // Handle a parenthesized expression
+    if (**input == '(') {
+        (*input)++;
+        if (!parseExpression(input, root)) {
+            return false;
+        }
+        if (**input != ')') {
+            return false;
+        }
+        (*input)++;
+    } else {
+        // Handle a single character
+        *root = createNode(TOKEN_CHAR, **input);
+        (*input)++;
+    }
+
+    // Handle a quantifier following a character or a parenthesized expression
+    if (**input == '*' || **input == '+' || **input == '?') {
+        char op = **input;
+        (*input)++;
+        TokenType opType;
+        switch (op) {
+            case '*':
+                opType = TOKEN_STAR;
+                break;
+            case '+':
+                opType = TOKEN_PLUS;
+                break;
+            case '?':
+                opType = TOKEN_QUESTION;
+                break;
+            default:
+                return false;
+        }
+        RegexNode *opNode = createNode(opType, op);
+        opNode->left = *root;
+        *root = opNode;
+    }
+
+    return true;
 }
