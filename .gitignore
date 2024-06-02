@@ -1,3 +1,5 @@
 test_lexer
 test_parser
+test_post2nfa
 obj/*.o
+.vscode
