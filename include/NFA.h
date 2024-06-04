@@ -1,6 +1,8 @@
 #ifndef NFA_H
 #define NFA_H
 
+#include "ptrlist.h"
+
 typedef struct State State;
 
 typedef struct Frag Frag;

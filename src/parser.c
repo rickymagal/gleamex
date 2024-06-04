@@ -1,5 +1,5 @@
 #include "../include/parser.h"
-#include "../include/lexer.h"
+#include "../include/regex.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -45,7 +45,7 @@ void freeRegexNode(RegexNode* node){
 // Parentheses tokens are never added to the syntax tree. They are used implicitly to delimit expressions, which are parsed separately and added to the root if they are valid.
 
 //Main function
-bool parseRegularExpression(char *input, RegexNode **root);
+bool parseRegularExpression(const Regex *regex, RegexNode **root);
 //parses terms separated by OR
 bool parseExpression(char **input, RegexNode **root);
 //parses a sequence of factors
@@ -53,8 +53,8 @@ bool parseTerm(char **input, RegexNode **root);
 //parses a single factor
 bool parseFactor(char **input, RegexNode **root);
 
-bool parseRegularExpression(char *input, RegexNode **root) {
-    char *current = input;
+bool parseRegularExpression(const Regex *regex, RegexNode **root) {
+     char *current = (char *)getRegexPattern(regex);
 
     // Parse the expression starting from the current position
     if (!parseExpression(&current, root)) {
