@@ -3,7 +3,7 @@
 #include "../include/regex.h"
 
 int main() {
-    char *input = "(a|b)*caud";
+    char *input = "(a|b)*(c)(a)(u)(d)";
     Regex* regex = createRegex(input);
     RegexNode *root = NULL;
     if(regex == NULL){
@@ -16,6 +16,7 @@ int main() {
     }
 
     freeRegexTree(root); 
-
+    freeRegex(regex);
+    
     return 0;
 }
