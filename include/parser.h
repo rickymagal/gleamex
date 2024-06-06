@@ -5,7 +5,8 @@
 #include "regex.h"
 
 // TokenType enumeration
-typedef enum {
+typedef enum
+{
     TOKEN_END,
     TOKEN_OR,
     TOKEN_STAR,
@@ -22,9 +23,12 @@ typedef enum {
 typedef struct RegexNodeStruct RegexNode;
 
 // Function declarations
-void printRegexTreePos(RegexNode* root);
-void printRegexTree(RegexNode* root);
+char *printRegexTreePos(RegexNode *root);
+void printRegexTree(RegexNode *root);
 bool parseRegularExpression(const Regex *regex, RegexNode **root);
 void freeRegexTree(RegexNode *root);
+
+// Converts a common Regular Expression into a PostFix notation
+char *re2post(Regex *regex);
 
 #endif /* PARSER_H */

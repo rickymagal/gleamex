@@ -7,14 +7,10 @@
 
 typedef struct Regex Regex;
 
-
-Regex* createRegex(const char *pattern);
-
+Regex *createRegex(const char *pattern);
 
 void freeRegex(Regex *regex);
 
-
-const char* getRegexPattern(const Regex *regex);
-
+const char *getRegexPattern(const Regex *regex);
 
 #endif /* REGEX_H */

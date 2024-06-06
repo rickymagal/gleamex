@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -Werror -pedantic -Iinclude
+CFLAGS=-Wall -Wextra -Werror -pedantic -Iinclude -g
 
 all: test_lexer test_parser
 
