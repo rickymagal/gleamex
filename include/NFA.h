@@ -21,6 +21,6 @@ char *re2post(char *re);
 */
 State* post2nfa(char *postfix, int *nstate);
 
-void freeNFA(State *NFA);
+void freeNFA(State *NFA, int nState);
 
 #endif

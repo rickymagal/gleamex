@@ -134,11 +134,22 @@ State* post2nfa(char *postfix, int *nstate) {
 	return e.start;
 }
 
-void freeNFA(State *NFA) {
-	if(NFA != NULL && NFA->lastlist != -1) {
-		NFA->lastlist = -1;
-		freeNFA(NFA->out);
-		freeNFA(NFA->out1);
-		free(NFA);
+void freeNFARec(State *curr, State *allNfas[], int *idx) {
+	if(curr != NULL && curr->lastlist != -1) {
+		curr->lastlist = -1;
+		freeNFARec(curr->out, allNfas, idx);
+		freeNFARec(curr->out1, allNfas, idx);
+		allNfas[(*idx)++] = curr;
+	}
+}
+
+void freeNFA(State *NFA, int nState) {
+	State *allStates[nState];
+	int idx = 0;
+
+	freeNFARec(NFA, allStates, &idx);
+
+	for(int i = 0; i < nState; i++) {
+		free(allStates[i]);
 	}
 }
