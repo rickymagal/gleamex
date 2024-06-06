@@ -1,3 +1,5 @@
+//Discontinued. Parser is now both the lexer and the Parser.
+
 #ifndef LEXER_H
 #define LEXER_H
 
@@ -24,3 +26,4 @@ char getTokenValue(Token *token);
 void freeToken(Token *token);
 
 #endif /* LEXER_H */
+

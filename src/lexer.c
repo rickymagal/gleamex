@@ -1,3 +1,5 @@
+//Discontinued. Parser is now both the lexer and the parser.
+
 #include "../include/lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,3 +66,4 @@ char getTokenValue(Token *token) {
 void freeToken(Token *token) {
     free(token);
 }
+
