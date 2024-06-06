@@ -3,7 +3,7 @@
 #include "../include/regex.h"
 
 int main() {
-    char *input = "(a|b)*(c)(a)(u)(d)";
+    char *input = "a(bb)+a";
     Regex* regex = createRegex(input);
     RegexNode *root = NULL;
     if(regex == NULL){
@@ -14,7 +14,8 @@ int main() {
     } else {
         printf("Parsing failed!\n");
     }
-
+    printRegexTree(root);
+    printRegexTreePos(root);
     freeRegexTree(root); 
     freeRegex(regex);
     

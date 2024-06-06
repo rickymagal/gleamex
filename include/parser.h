@@ -22,6 +22,8 @@ typedef enum {
 typedef struct RegexNodeStruct RegexNode;
 
 // Function declarations
+void printRegexTreePos(RegexNode* root);
+void printRegexTree(RegexNode* root);
 bool parseRegularExpression(const Regex *regex, RegexNode **root);
 void freeRegexTree(RegexNode *root);
 

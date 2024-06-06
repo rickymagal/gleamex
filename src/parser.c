@@ -1,5 +1,6 @@
 #include "../include/parser.h"
 #include "../include/regex.h"
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -33,7 +34,96 @@ void freeRegexTree(RegexNode* root) {
 
 void freeRegexNode(RegexNode* node){
   free(node);
+
 }
+
+
+void printRegexTreePosHelper(RegexNode* root) {
+    if (root == NULL) {
+        return;
+    }
+
+    // Print left subtree
+    printRegexTreePosHelper(root->left);
+
+    // Print right subtree
+    printRegexTreePosHelper(root->right);
+
+    // Print the current node
+    switch (root->type) {
+        case TOKEN_CHAR:
+            printf("%c", root->value);
+            break;
+        case TOKEN_OR:
+            printf("|");
+            break;
+        case TOKEN_STAR:
+            printf("*");
+            break;
+        case TOKEN_PLUS:
+            printf("+");
+            break;
+        case TOKEN_QUESTION:
+            printf("?");
+            break;
+        case TOKEN_EMPTY:
+            printf(".");
+            break;
+        default:
+            printf("?");
+            break;
+    }
+}
+
+void printRegexTreePos(RegexNode* root) {
+    printRegexTreePosHelper(root);
+    printf("\n");
+}
+
+
+void printRegexTreeHelper(RegexNode* root, int depth) {
+    if (root == NULL) {
+        return;
+    }
+
+    // Print the current node
+    for (int i = 0; i < depth; i++) {
+        printf("   ");
+    }
+
+    switch (root->type) {
+        case TOKEN_CHAR:
+            printf("CHAR(%c)\n", root->value);
+            break;
+        case TOKEN_OR:
+            printf("OR(|)\n");
+            break;
+        case TOKEN_STAR:
+            printf("STAR(*)\n");
+            break;
+        case TOKEN_PLUS:
+            printf("PLUS(+)\n");
+            break;
+        case TOKEN_QUESTION:
+            printf("QUESTION(?)\n");
+            break;
+        case TOKEN_EMPTY:
+            printf("CONCAT(.)\n");
+            break;
+        default:
+            printf("UNKNOWN\n");
+            break;
+    }
+
+    // Recursively print left and right subtrees
+    printRegexTreeHelper(root->left, depth + 1);
+    printRegexTreeHelper(root->right, depth + 1);
+}
+
+void printRegexTree(RegexNode* root) {
+    printRegexTreeHelper(root, 0);
+}
+
 
 //The Following functions are used to construct a syntax tree for the given regular expression and use it to determine if the Regex is valid. 
 
@@ -96,7 +186,7 @@ bool parseTerm(char **input, RegexNode **root) {
     }
 
     while (**input != '\0' && **input != '|' && **input != ')') {
-        RegexNode *concatNode = createNode(TOKEN_EMPTY, '\0');
+        RegexNode *concatNode = createNode(TOKEN_EMPTY, '.');
         concatNode->left = *root;
         if (!parseFactor(input, &(concatNode->right))) {
             freeRegexTree(concatNode);
