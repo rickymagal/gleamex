@@ -40,3 +40,7 @@ void patch(Ptrlist *l, State *s) {
         l = l->next;
     }
 }
+
+void freePtrlist(Ptrlist *l) {
+    free(l);
+}

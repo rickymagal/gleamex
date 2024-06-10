@@ -16,4 +16,6 @@ Ptrlist *append(Ptrlist *l1, Ptrlist *l2);
 // Push back a State in the Pointer List
 void patch(Ptrlist *l, State *s);
 
+void freePtrlist(Ptrlist *l);
+
 #endif
