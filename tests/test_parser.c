@@ -1,17 +1,32 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "../include/parser.h"
+#include "../include/regex.h"
 
-int main() {
-    char *input = "(a|b)*caud";
-    RegexNode *root = NULL;
+int main()
+{
+    char *input = "a(bb|cc)+a*";
+    Regex *regex = createRegex(input);
+    if (regex == NULL)
+        return 0;
 
-    if (parseRegularExpression(input, &root)) {
+    char *post = re2post(regex);
+
+    if (post)
+    {
         printf("Parsing successful!\n");
-    } else {
+        printf("%s\n", post);
+    }
+    else
+    {
         printf("Parsing failed!\n");
     }
-
-    freeRegexTree(root); 
+    // printRegexTree(root);
+    // printRegexTreePos(root);
+    // freeRegexTree(root);
+    if (post)
+        free(post);
+    freeRegex(regex);
 
     return 0;
 }

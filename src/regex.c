@@ -26,21 +26,3 @@ void freeRegex(Regex *regex) {
 const char* getRegexPattern(const Regex *regex) {
     return regex->pattern;
 }
-
-bool validateRegex(const Regex *regex) {
-    int balance = 0;
-    const char *input = regex->pattern;
-    
-    while (*input) {
-        if (*input == '(') {
-            balance++;
-        } else if (*input == ')') {
-            balance--;
-        }
-        if (balance < 0) {
-            return false; 
-        }
-        input++;
-    }
-    return balance == 0; 
-}

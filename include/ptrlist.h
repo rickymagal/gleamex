@@ -1,7 +1,9 @@
 #ifndef PTRLIST_H
 #define PTRLIST_H
 
-#include <NFA.h>
+#include "NFA.h"
+
+typedef struct State State;
 
 typedef struct Ptrlist Ptrlist;
 
