@@ -9,6 +9,8 @@
 #define push(stack, f) *stack++ = f
 #define pop(stack) *--stack
 
+
+
 // Structure representing a state in the NFA
 struct State {
     int c;          // Transition character or Split
@@ -22,6 +24,8 @@ typedef struct
 	State *start;
 	Ptrlist *out;
 }Frag;
+
+/////////////////////////////////////////////////// POST 2 NFA functions ////////////////////////////////////////////////
 
 State *state(int c, State *out, State *out1) {
 	State *s = malloc(sizeof(State));
@@ -156,6 +160,8 @@ void freeNFA(State *NFA, int nState) {
 	}
 }
 
+/////////////////////////////// Structures ///////////////////////////////////////////////////////////////////////////
+
 // Structure representing a list of NFA states
 typedef struct {
     struct State **s;  // Array of pointers to NFA states
@@ -171,16 +177,23 @@ typedef struct DState {
     struct DState *right;       // Right child in binary tree for caching
 } DState;
 
+
+/////////////////////////////// State manipulation functions //////////////////////////////////////////////////////
+
+
 State* create_state(int c, State* out, State* out1) {
-    State* s = malloc(sizeof(State));
-    if (s != NULL) {
-        s->c = c;
-        s->out = out;
-        s->out1 = out1;
-        s->lastlist = 0;
+    State* state = (State*)malloc(sizeof(State));
+    if (!state) {
+        return NULL;
     }
-    return s;
+    state->c = c;
+    state->out = out;
+    state->out1 = out1;
+    return state;
 }
+
+
+
 
 int get_state_char(const struct State *state) {
     if (state != NULL) {
@@ -221,93 +234,144 @@ void print_state(State* s, const char* name) {
 }
 
 // Function to free memory allocated for a State
-void free_state(State* s) {
-    if (s == NULL) return;
-    free_state(s->out);
-    free_state(s->out1);
-    free(s);
+void free_state(State* state) {
+    if (state == NULL) return;
+    free_state(state->out);
+    free_state(state->out1);
+    free(state);
 }
 
+///////////////////////////////////////////////// NFA Simulation /////////////////////////////////////////////////////////
+
+List l1, l2;
 int listid = 0;
 
-// Função auxiliar para adicionar um estado à lista
-void addstate(List *l, struct State *s) {
-    if (s == NULL || s->lastlist == listid)
-        return;
-    s->lastlist = listid;
-    if (s->c == Split) {
-        // Segue as setas sem rótulo
-        addstate(l, s->out);
-        addstate(l, s->out1);
-        return;
-    }
-    if (l->n >= l->capacity) {
-        l->capacity *= 2;
-        l->s = realloc(l->s, l->capacity * sizeof(struct State *));
-        if (l->s == NULL) {
-            printf("Erro: Falha na realocação de memória.\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    l->s[l->n++] = s;
-}
+List* startlist(State *s, List *l);
+void addstate(List *l, State *s);
+void step(List *clist, int c, List *nlist);
+int ismatch(List *l);
 
-// Função para criar uma lista inicial de estados
-List *startlist(struct State *s) {
+List* startlist(State *s, List *l) {
     listid++;
-    List *l = (List *)malloc(sizeof(List));
-    l->capacity = 10;  // Capacidade inicial
-    l->s = (struct State **)malloc(l->capacity * sizeof(struct State *));
     l->n = 0;
     addstate(l, s);
     return l;
 }
 
-// Função para avançar o NFA após um único caractere
-List *step(List *clist, int c) {
-    int i;
-    struct State *s;
-
-    listid++;
-    List *nlist = (List *)malloc(sizeof(List));
-    nlist->capacity = clist->capacity;
-    nlist->s = (struct State **)malloc(nlist->capacity * sizeof(struct State *));
-    nlist->n = 0;
-
-    for (i = 0; i < clist->n; i++) {
-        s = clist->s[i];
-        if (s->c == c)
-            addstate(nlist, s->out);
+void addstate(List *l, State *s) {
+    if (s == NULL || s->lastlist == listid) {
+        return;
     }
-
-    free(clist->s);
-    free(clist);
-    return nlist;
+    s->lastlist = listid;
+    if (s->c == Split) {
+        addstate(l, s->out);
+        addstate(l, s->out1);
+        return;
+    }
+    l->s[l->n++] = s;
 }
 
-// Função para verificar se a lista contém o estado de correspondência
+void step(List *clist, int c, List *nlist) {
+    int i;
+    State *s;
+
+    listid++;
+    nlist->n = 0;
+    for (i = 0; i < clist->n; i++) {
+        s = clist->s[i];
+        if (s->c == c) {
+            addstate(nlist, s->out);
+        }
+    }
+}
+
 int ismatch(List *l) {
     int i;
-
     for (i = 0; i < l->n; i++) {
-        if (l->s[i]->c == Match) // Verifica se o estado é um estado de correspondência
+        if (l->s[i]->c == Match) {
             return 1;
+        }
     }
     return 0;
 }
 
-// Função para simular o NFA
-bool match_nfa(struct State *start, char *s) {
-    List *clist, *nlist;
-
-    clist = startlist(start);
-    for (; *s; s++) {
-        nlist = step(clist, *s);
-        clist = nlist;
+bool match_nfa(State* start, char* input) {
+    if (start == NULL) {
+        return false;
     }
 
-    int result = ismatch(clist);
-    free(clist->s);
-    free(clist);
-    return result;
+    if (start->c == Match) {
+        return *input == '\0';
+    } else if (start->c == Split) {
+        return match_nfa(start->out, input) || match_nfa(start->out1, input);
+    } else {
+        if (*input == '\0') {
+            return false;
+        }
+        if (start->c == *input) {
+            return match_nfa(start->out, input + 1);
+        }
+        return false;
+    }
 }
+
+//////////////////////////////////////////////// NFA to DFA and DFA simulation //////////////////////////////////////////
+DState* dstate(List *l);
+DState* nextstate(DState *d, int c);
+DState* startdstate(State *start);
+bool match_dfa(DState *start, char *s);
+
+int listcmp(const void *a, const void *b) {
+    return *(State **)a - *(State **)b;
+}
+
+DState* dstate(List *l) {
+    int i;
+    DState **dp, *d;
+    static DState *alldstates;
+
+    qsort(l->s, l->n, sizeof l->s[0], listcmp);
+
+    dp = &alldstates;
+    while ((d = *dp) != NULL) {
+        i = memcmp(l->s, d->l.s, l->n * sizeof(l->s[0]));
+        if (i < 0)
+            dp = &d->left;
+        else if (i > 0)
+            dp = &d->right;
+        else
+            return d;
+    }
+    d = malloc(sizeof *d + l->n * sizeof l->s[0]);
+    memset(d, 0, sizeof *d);
+    d->l.s = (State **)(d + 1);
+    d->l.n = l->n;
+    memcpy(d->l.s, l->s, l->n * sizeof l->s[0]);
+    *dp = d;
+    return d;
+}
+
+DState* nextstate(DState *d, int c) {
+    if (d->next[c] == NULL) {
+        d->next[c] = dstate(startlist(d->l.s[0]->out, &l1));
+    }
+    return d->next[c];
+}
+
+DState* startdstate(State *start) {
+    List *l = startlist(start, &l1);
+    return dstate(l);
+}
+
+bool match_dfa(DState *start, char *s) {
+    DState *d = start;
+    for (; *s; s++) {
+        d = nextstate(d, *s);
+        if (d == NULL) {
+            return 0;
+        }
+    }
+    return ismatch(&d->l);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

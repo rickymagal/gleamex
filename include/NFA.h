@@ -11,14 +11,11 @@
 
 // Forward declaration of State struct to avoid circular dependency
 typedef struct State State;
+typedef struct DState DState;
 
 // Converts a common Regular Expression into a PostFix notation
 char *re2post(char *re);
 
-/* Generate a non-deterministic finite automata from a postfixed regular expression
- *
- * Detail: nstate is an int pointer where the number of states in the NFA will be stored
-*/
 State* post2nfa(char *postfix, int *nstate);
 
 void freeNFA(State *NFA, int nState);
@@ -36,6 +33,6 @@ void free_state(State *state);
 bool match_nfa(State *start, char *s);
 
 // Convert NFA to DFA and match
-bool match_dfa(State *start, char *s);
+bool match_dfa(DState *start, char *s);
 
 #endif
