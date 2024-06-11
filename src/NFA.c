@@ -10,7 +10,6 @@
 #define pop(stack) *--stack
 
 
-
 // Structure representing a state in the NFA
 struct State {
     int c;          // Transition character or Split
@@ -24,6 +23,9 @@ typedef struct
 	State *start;
 	Ptrlist *out;
 }Frag;
+
+State matchstate = { Match, NULL, NULL, -1 }; 
+int nstate;
 
 /////////////////////////////////////////////////// POST 2 NFA functions ////////////////////////////////////////////////
 
@@ -166,7 +168,6 @@ void freeNFA(State *NFA, int nState) {
 typedef struct {
     struct State **s;  // Array of pointers to NFA states
     int n;             // Number of states in the list
-    int capacity;      // Capacity of the array
 } List;
 
 // Structure representing a DFA state
@@ -191,9 +192,6 @@ State* create_state(int c, State* out, State* out1) {
     state->out1 = out1;
     return state;
 }
-
-
-
 
 int get_state_char(const struct State *state) {
     if (state != NULL) {
@@ -243,56 +241,63 @@ void free_state(State* state) {
 
 ///////////////////////////////////////////////// NFA Simulation /////////////////////////////////////////////////////////
 
+
 List l1, l2;
-int listid = 0;
+static int listid;
 
 List* startlist(State *s, List *l);
 void addstate(List *l, State *s);
 void step(List *clist, int c, List *nlist);
 int ismatch(List *l);
 
-List* startlist(State *s, List *l) {
-    listid++;
-    l->n = 0;
-    addstate(l, s);
-    return l;
+List*
+startlist(State *start, List *l)
+{
+	l->n = 0;
+	listid++;
+	addstate(l, start);
+	return l;
 }
 
-void addstate(List *l, State *s) {
-    if (s == NULL || s->lastlist == listid) {
-        return;
-    }
-    s->lastlist = listid;
-    if (s->c == Split) {
-        addstate(l, s->out);
-        addstate(l, s->out1);
-        return;
-    }
-    l->s[l->n++] = s;
+int
+ismatch(List *l)
+{
+	int i;
+
+	for(i=0; i<l->n; i++)
+		if(l->s[i] == &matchstate)
+			return 1;
+	return 0;
 }
 
-void step(List *clist, int c, List *nlist) {
-    int i;
-    State *s;
-
-    listid++;
-    nlist->n = 0;
-    for (i = 0; i < clist->n; i++) {
-        s = clist->s[i];
-        if (s->c == c) {
-            addstate(nlist, s->out);
-        }
-    }
+void
+addstate(List *l, State *s)
+{
+	if(s == NULL || s->lastlist == listid)
+		return;
+	s->lastlist = listid;
+	if(s->c == Split){
+		/* follow unlabeled arrows */
+		addstate(l, s->out);
+		addstate(l, s->out1);
+		return;
+	}
+	l->s[l->n++] = s;
 }
 
-int ismatch(List *l) {
-    int i;
-    for (i = 0; i < l->n; i++) {
-        if (l->s[i]->c == Match) {
-            return 1;
-        }
-    }
-    return 0;
+void
+step(List *clist, int c, List *nlist)
+{
+	int i;
+	State *s;
+
+	listid++;
+	nlist->n = 0;
+	for(i=0; i<clist->n; i++){
+		s = clist->s[i];
+		if(s->c == c)
+			addstate(nlist, s->out);
+	}
 }
 
 bool match_nfa(State* start, char* input) {
@@ -316,62 +321,87 @@ bool match_nfa(State* start, char* input) {
 }
 
 //////////////////////////////////////////////// NFA to DFA and DFA simulation //////////////////////////////////////////
-DState* dstate(List *l);
-DState* nextstate(DState *d, int c);
-DState* startdstate(State *start);
-bool match_dfa(DState *start, char *s);
 
-int listcmp(const void *a, const void *b) {
-    return *(State **)a - *(State **)b;
+static int listcmp(List *l1, List *l2);
+
+
+static int listcmp(List *l1, List *l2){
+	int i;
+
+	if(l1->n < l2->n)
+		return -1;
+	if(l1->n > l2->n)
+		return 1;
+	for(i=0; i<l1->n; i++)
+		if(l1->s[i] < l2->s[i])
+			return -1;
+		else if(l1->s[i] > l2->s[i])
+			return 1;
+	return 0;
 }
 
-DState* dstate(List *l) {
-    int i;
-    DState **dp, *d;
-    static DState *alldstates;
-
-    qsort(l->s, l->n, sizeof l->s[0], listcmp);
-
-    dp = &alldstates;
-    while ((d = *dp) != NULL) {
-        i = memcmp(l->s, d->l.s, l->n * sizeof(l->s[0]));
-        if (i < 0)
-            dp = &d->left;
-        else if (i > 0)
-            dp = &d->right;
-        else
-            return d;
-    }
-    d = malloc(sizeof *d + l->n * sizeof l->s[0]);
-    memset(d, 0, sizeof *d);
-    d->l.s = (State **)(d + 1);
-    d->l.n = l->n;
-    memcpy(d->l.s, l->s, l->n * sizeof l->s[0]);
-    *dp = d;
-    return d;
+static int ptrcmp(const void *a, const void *b)
+{
+	if(a < b)
+		return -1;
+	if(a > b)
+		return 1;
+	return 0;
 }
 
-DState* nextstate(DState *d, int c) {
-    if (d->next[c] == NULL) {
-        d->next[c] = dstate(startlist(d->l.s[0]->out, &l1));
-    }
-    return d->next[c];
+DState *alldstates;
+
+DState* dstate(List *l){
+	int i;
+	DState **dp, *d;
+
+	qsort(l->s, l->n, sizeof l->s[0], ptrcmp);
+	dp = &alldstates;
+	while((d = *dp) != NULL){
+		i = listcmp(l, &d->l);
+		if(i < 0)
+			dp = &d->left;
+		else if(i > 0)
+			dp = &d->right;
+		else
+			return d;
+	}
+	
+	d = malloc(sizeof *d + l->n*sizeof l->s[0]);
+	memset(d, 0, sizeof *d);
+	d->l.s = (State**)(d+1);
+	memmove(d->l.s, l->s, l->n*sizeof l->s[0]);
+	d->l.n = l->n;
+	*dp = d;
+	return d;
 }
 
-DState* startdstate(State *start) {
-    List *l = startlist(start, &l1);
-    return dstate(l);
+
+DState*
+startdstate(State *start)
+{
+	return dstate(startlist(start, &l1));
 }
 
-bool match_dfa(DState *start, char *s) {
-    DState *d = start;
-    for (; *s; s++) {
-        d = nextstate(d, *s);
-        if (d == NULL) {
-            return 0;
-        }
-    }
-    return ismatch(&d->l);
+DState*
+nextstate(DState *d, int c)
+{
+	step(&d->l, c, &l1);
+	return d->next[c] = dstate(&l1);
+}
+
+bool match_dfa(DState *start, char *s){
+	DState *d, *next;
+	int c;
+	
+	d = start;
+	for(; *s; s++){
+		c = *s & 0xFF;
+		if((next = d->next[c]) == NULL)
+			next = nextstate(d, c);
+		d = next;
+	}
+	return ismatch(&d->l);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

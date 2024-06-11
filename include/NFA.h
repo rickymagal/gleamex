@@ -6,15 +6,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define Split (-1)
-#define Match (-2)
+#define Split (257)
+#define Match (256)
 
 // Forward declaration of State struct to avoid circular dependency
 typedef struct State State;
 typedef struct DState DState;
-
-// Converts a common Regular Expression into a PostFix notation
-char *re2post(char *re);
 
 State* post2nfa(char *postfix, int *nstate);
 
@@ -33,6 +30,7 @@ void free_state(State *state);
 bool match_nfa(State *start, char *s);
 
 // Convert NFA to DFA and match
+DState* startdstate(State *start);
 bool match_dfa(DState *start, char *s);
 
 #endif
