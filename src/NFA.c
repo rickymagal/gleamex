@@ -256,7 +256,7 @@ ismatch(List *l)
 	int i;
 
 	for(i=0; i<l->n; i++)
-		if(l->s[i] == &matchstate)
+		if(l->s[i]->c == Match)
 			return 1;
 	return 0;
 }
@@ -450,9 +450,8 @@ void free_DFA(DState *start_dfa) {
 
 ////////////////////////////////////////////////////////// Main //////////////////////////////////////////////////////////
 
-
 int main() {
-    const char *regex_pattern = "a(b|c)";
+    const char *regex_pattern = "a(b|c|d)*e(f|g|h)+";
     Regex *regex = createRegex(regex_pattern);
     if (regex == NULL) {
         fprintf(stderr, "Erro ao criar o objeto Regex com o padrão: %s\n", regex_pattern);
@@ -493,7 +492,7 @@ int main() {
         return 1;
     }
     
-    const char *test_string = "abcd";
+    const char *test_string = "abcbcbdefgh";
     bool match_nfa_result = match_nfa(start_nfa, (char *)test_string);
 
     DState *start_dfa = startdstate(start_nfa);
