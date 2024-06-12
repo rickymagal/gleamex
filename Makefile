@@ -1,55 +1,47 @@
+# Makefile para compilar o main de NFA.c e suas dependências
+
+# Definição de compilador e flags
 CC=gcc
 CFLAGS=-Wall -Wextra -Werror -pedantic -Iinclude -g
 
-all: test_lexer test_parser test_post2nfa test_NFA_match_correctness test_entire_engine
+# Diretório para arquivos objeto
+OBJDIR=obj
 
-test_post2nfa: obj/NFA.o obj/test_post2nfa.o obj/ptrlist.o
-	$(CC) $(CFLAGS) $^ -o $@
+# Lista de arquivos objeto
+OBJS=$(OBJDIR)/NFA.o $(OBJDIR)/ptrlist.o $(OBJDIR)/regex.o $(OBJDIR)/lexer.o $(OBJDIR)/parser.o
 
-test_lexer: obj/lexer.o obj/test_lexer.o
-	$(CC) $(CFLAGS) $^ -o $@
+# Regra padrão: compilar o executável main
+all: main
 
-test_parser: obj/parser.o obj/test_parser.o obj/lexer.o obj/regex.o
-	$(CC) $(CFLAGS) $^ -o $@
+# Regra para compilar main a partir de NFA.c (assumindo que main está em NFA.c)
+main: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o main
 
-test_NFA_match_correctness: obj/NFA.o obj/test_NFA_match_correctness.o obj/ptrlist.o
-	$(CC) $(CFLAGS) $^ -o $@
+# Regra para compilar NFA.c
+$(OBJDIR)/NFA.o: src/NFA.c include/NFA.h | $(OBJDIR)
+	$(CC) $(CFLAGS) -c src/NFA.c -o $(OBJDIR)/NFA.o
 
-test_entire_engine: obj/NFA.o obj/parser.o obj/ptrlist.o obj/regex.o obj/test_entire_engine.o
-	$(CC) $(CFLAGS) $^ -o $@
+# Regras para os outros arquivos objeto
+$(OBJDIR)/ptrlist.o: src/ptrlist.c include/ptrlist.h | $(OBJDIR)
+	$(CC) $(CFLAGS) -c src/ptrlist.c -o $(OBJDIR)/ptrlist.o
 
-obj/lexer.o: src/lexer.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJDIR)/regex.o: src/regex.c include/regex.h | $(OBJDIR)
+	$(CC) $(CFLAGS) -c src/regex.c -o $(OBJDIR)/regex.o
 
-obj/parser.o: src/parser.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJDIR)/lexer.o: src/lexer.c include/lexer.h | $(OBJDIR)
+	$(CC) $(CFLAGS) -c src/lexer.c -o $(OBJDIR)/lexer.o
 
-obj/NFA.o: src/NFA.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJDIR)/parser.o: src/parser.c include/parser.h | $(OBJDIR)
+	$(CC) $(CFLAGS) -c src/parser.c -o $(OBJDIR)/parser.o
 
-obj/ptrlist.o: src/ptrlist.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
-  
-obj/regex.o: src/regex.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
+# Regra para criar o diretório obj, se não existir
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-obj/test_lexer.o: tests/test_lexer.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
-
-obj/test_parser.o: tests/test_parser.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
-
-obj/test_post2nfa.o: tests/test_post2nfa.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
-
-obj/test_NFA_match_correctness.o: tests/test_NFA_match_correctness.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
-
-obj/test_entire_engine.o: tests/test_entire_engine.c | obj
-	$(CC) $(CFLAGS) -c $< -o $@
-
-obj:
-	mkdir -p obj
-
+# Regra para limpar os arquivos objeto e o executável
 clean:
-	rm -rf obj test_lexer test_parser test_post2nfa test_NFA_match_correctness test_entire_engine
+	rm -rf $(OBJDIR) main
+
+# Phony target para evitar conflitos com arquivos de mesmo nome
+.PHONY: clean
+

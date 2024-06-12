@@ -1,5 +1,7 @@
 #include "../include/NFA.h"
 #include "../include/ptrlist.h"
+#include "../include/parser.h"
+#include "../include/regex.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -9,6 +11,8 @@
 #define push(stack, f) *stack++ = f
 #define pop(stack) *--stack
 
+
+///////////////////////////////// Initial Definitions ///////////////////////////////////////////////////////////////////
 
 // Structure representing a state in the NFA
 struct State {
@@ -25,7 +29,6 @@ typedef struct
 }Frag;
 
 State matchstate = { Match, NULL, NULL, -1 }; 
-int nstate;
 
 /////////////////////////////////////////////////// POST 2 NFA functions ////////////////////////////////////////////////
 
@@ -162,22 +165,13 @@ void freeNFA(State *NFA, int nState) {
 	}
 }
 
-/////////////////////////////// Structures ///////////////////////////////////////////////////////////////////////////
+/////////////////////////////// NFA match Structures /////////////////////////////////////////////////////////////////////
 
 // Structure representing a list of NFA states
 typedef struct {
     struct State **s;  // Array of pointers to NFA states
     int n;             // Number of states in the list
 } List;
-
-// Structure representing a DFA state
-typedef struct DState {
-    List l;                     // List of NFA states corresponding to this DFA state
-    struct DState *next[256];   // Array of pointers to next DFA states based on input characters
-    struct DState *left;        // Left child in binary tree for caching
-    struct DState *right;       // Right child in binary tree for caching
-} DState;
-
 
 /////////////////////////////// State manipulation functions //////////////////////////////////////////////////////
 
@@ -243,22 +237,19 @@ void free_state(State* state) {
 
 
 List l1, l2;
-static int listid;
+static int listid = 0;
 
 List* startlist(State *s, List *l);
 void addstate(List *l, State *s);
 void step(List *clist, int c, List *nlist);
 int ismatch(List *l);
 
-List*
-startlist(State *start, List *l)
-{
-	l->n = 0;
-	listid++;
-	addstate(l, start);
-	return l;
+List* startlist(State *s, List *l) {
+    l->n = 0;
+    listid++;
+    addstate(l, s);
+    return l;
 }
-
 int
 ismatch(List *l)
 {
@@ -270,21 +261,28 @@ ismatch(List *l)
 	return 0;
 }
 
-void
-addstate(List *l, State *s)
-{
-	if(s == NULL || s->lastlist == listid)
-		return;
-	s->lastlist = listid;
-	if(s->c == Split){
-		/* follow unlabeled arrows */
-		addstate(l, s->out);
-		addstate(l, s->out1);
-		return;
-	}
-	l->s[l->n++] = s;
+void addstate(List *l, State *s) {
+    if (s == NULL) {
+        printf("Error: state is NULL in addstate\n");
+        return;
+    }
+    if (s->lastlist == listid) {
+        return;
+    }
+    s->lastlist = listid;
+    if (s->c == Split) {
+        addstate(l, s->out);
+        addstate(l, s->out1);
+        return;
+    }
+    if (l->s == NULL) {;
+        l->s = malloc(MAX_STACK_SIZE * sizeof(State *));
+        if (l->s == NULL) {
+            exit(1);
+        }
+    }
+    l->s[l->n++] = s;
 }
-
 void
 step(List *clist, int c, List *nlist)
 {
@@ -322,6 +320,15 @@ bool match_nfa(State* start, char* input) {
 
 //////////////////////////////////////////////// NFA to DFA and DFA simulation //////////////////////////////////////////
 
+// Structure representing a DFA state
+typedef struct DState {
+    List l;                     // List of NFA states corresponding to this DFA state
+    struct DState *next[256];   // Array of pointers to next DFA states based on input characters
+    struct DState *left;        // Left child in binary tree for caching
+    struct DState *right;       // Right child in binary tree for caching
+} DState;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static int listcmp(List *l1, List *l2);
 
 
@@ -349,59 +356,157 @@ static int ptrcmp(const void *a, const void *b)
 	return 0;
 }
 
-DState *alldstates;
+DState *alldstates = NULL;
 
-DState* dstate(List *l){
-	int i;
-	DState **dp, *d;
+DState* dstate(List *l) {
+    int i;
+    DState **dp, *d;
+    qsort(l->s, l->n, sizeof l->s[0], ptrcmp);
+    dp = &alldstates;
+    while ((d = *dp) != NULL) {
+        i = listcmp(l, &d->l);
+        if (i < 0)
+            dp = &d->left;
+        else if (i > 0)
+            dp = &d->right;
+        else
+            return d;
+    }
 
-	qsort(l->s, l->n, sizeof l->s[0], ptrcmp);
-	dp = &alldstates;
-	while((d = *dp) != NULL){
-		i = listcmp(l, &d->l);
-		if(i < 0)
-			dp = &d->left;
-		else if(i > 0)
-			dp = &d->right;
-		else
-			return d;
-	}
-	
-	d = malloc(sizeof *d + l->n*sizeof l->s[0]);
-	memset(d, 0, sizeof *d);
-	d->l.s = (State**)(d+1);
-	memmove(d->l.s, l->s, l->n*sizeof l->s[0]);
-	d->l.n = l->n;
-	*dp = d;
-	return d;
+    d = malloc(sizeof *d + l->n * sizeof l->s[0]);
+    if (d == NULL) {
+        printf("Memory allocation failed for dstate.\n");
+        return NULL;
+    }
+
+    memset(d, 0, sizeof *d);
+    d->l.s = (State**) (d + 1);
+    memmove(d->l.s, l->s, l->n * sizeof l->s[0]);
+    d->l.n = l->n;
+    *dp = d;
+    return d;
+}
+
+DState* startdstate(State *start) {
+    if (start == NULL) {
+        printf("Error: start state is NULL\n");
+        return NULL;
+    }
+    return dstate(startlist(start, &l1));
+}
+
+DState* nextstate(DState *d, int c) {
+    step(&d->l, c, &l1);
+    DState *new_state = dstate(&l1);
+    if (new_state == NULL) {
+        printf("Error: Failed to create new DFA state for character %c\n", c);
+        return NULL;
+    }
+    return d->next[c] = new_state;
+}
+
+bool match_dfa(DState *start, char *s) {
+    DState *d = start;
+    DState *next;
+    int c;
+    
+    for (; *s; s++) {
+        c = *s & 0xFF;
+        if ((next = d->next[c]) == NULL) {
+            next = nextstate(d, c);
+        }
+        d = next;
+    }
+    
+    bool result = ismatch(&d->l);
+    return result;
 }
 
 
-DState*
-startdstate(State *start)
-{
-	return dstate(startlist(start, &l1));
-}
+////////////////////////////////////////////////////////// Main //////////////////////////////////////////////////////////
 
-DState*
-nextstate(DState *d, int c)
-{
-	step(&d->l, c, &l1);
-	return d->next[c] = dstate(&l1);
-}
 
-bool match_dfa(DState *start, char *s){
-	DState *d, *next;
-	int c;
-	
-	d = start;
-	for(; *s; s++){
-		c = *s & 0xFF;
-		if((next = d->next[c]) == NULL)
-			next = nextstate(d, c);
-		d = next;
-	}
-	return ismatch(&d->l);
-}
+int main() {
+    // Exemplo de padrão de expressão regular para teste
+    const char *regex_pattern = "a(b|c)";
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Criar o objeto Regex usando o padrão
+    Regex *regex = createRegex(regex_pattern);
+    if (regex == NULL) {
+        fprintf(stderr, "Erro ao criar o objeto Regex com o padrão: %s\n", regex_pattern);
+        return 1;
+    }
+
+    // Imprimir o padrão da expressão regular (opcional, apenas para verificação)
+    printf("Padrão da regex: %s\n", getRegexPattern(regex));
+
+    // Converter o padrão de regex para a notação postfix
+    char *postfix = re2post(regex);
+    if (postfix == NULL) {
+        fprintf(stderr, "Erro ao converter o padrão de regex para postfix: %s\n", regex_pattern);
+        freeRegex(regex);
+        return 1;
+    }
+
+    // Contador de estados no NFA
+    int nstate;
+
+    // Construir o NFA a partir do postfix e obter o número de estados
+    State *start_nfa = post2nfa(postfix, &nstate);
+    if (start_nfa == NULL) {
+        fprintf(stderr, "Erro ao construir NFA a partir do postfix: %s\n", postfix);
+        freeRegex(regex);
+        return 1;
+    }
+
+    // Libera a memória alocada para o postfix, pois não é mais necessário
+    free(postfix);
+
+    // Inicializar lista de estados para armazenar estados do NFA
+    l1.s = malloc(nstate * sizeof(l1.s[0]));
+    if (l1.s == NULL) {
+        fprintf(stderr, "Erro ao alocar memória para lista de estados do NFA\n");
+        freeNFA(start_nfa, nstate);
+        freeRegex(regex);
+        return 1;
+    }
+
+    // Inicializar lista de estados para armazenar estados do DFA
+    l2.s = malloc(nstate * sizeof(l2.s[0]));
+    if (l2.s == NULL) {
+        fprintf(stderr, "Erro ao alocar memória para lista de estados do DFA\n");
+        freeNFA(start_nfa, nstate);
+        free(l1.s);
+        freeRegex(regex);
+        return 1;
+    }
+
+    // Testar match usando NFA para uma string específica
+    const char *test_string = "abcd";
+    bool match_nfa_result = match_nfa(start_nfa, (char *)test_string);
+
+    // Testar match usando DFA para a mesma string
+    DState *start_dfa = startdstate(start_nfa);
+    bool match_dfa_result = match_dfa(start_dfa, (char *)test_string);
+
+    // Imprimir o resultado da correspondência para o NFA e DFA
+    printf("String \"%s\": ", test_string);
+    if (match_nfa_result) {
+        printf("Passou no NFA.");
+    } else {
+        printf("Nao passou no NFA.");
+    }
+    if (match_dfa_result) {
+        printf("Passou no DFA.\n");
+    } else {
+        printf("Nao passou no DFA.\n");
+    }
+
+    // Liberar memória alocada para o NFA, DFA e objeto Regex
+    freeNFA(start_nfa, nstate);
+    free(l1.s);
+    free(l2.s);
+    freeRegex(regex);
+
+    return 0;
+}
