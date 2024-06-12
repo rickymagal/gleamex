@@ -32,5 +32,10 @@ bool match_nfa(State *start, char *s);
 // Convert NFA to DFA and match
 DState* startdstate(State *start);
 bool match_dfa(DState *start, char *s);
+void free_DFA(DState *d);
+
+//Free DFA
+
+
 
 #endif

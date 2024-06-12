@@ -422,47 +422,60 @@ bool match_dfa(DState *start, char *s) {
     return result;
 }
 
+void free_DFA_rec(DState *curr, DState **allDStates, int *idx) {
+    if (curr == NULL) {
+        return;
+    }
+    
+    curr->l.s = NULL;
+    free_DFA_rec(curr->left, allDStates, idx);
+    free_DFA_rec(curr->right, allDStates, idx);
+    allDStates[(*idx)++] = curr;
+}
+
+void free_DFA(DState *start_dfa) {
+    if (start_dfa == NULL) {
+        return;
+    }
+
+    DState *allDStates[MAX_STACK_SIZE]; 
+    int idx = 0;
+    free_DFA_rec(start_dfa, allDStates, &idx);
+
+    // Libera todos os estados coletados na lista
+    for (int i = 0; i < idx; i++) {
+        free(allDStates[i]);
+    }
+}
 
 ////////////////////////////////////////////////////////// Main //////////////////////////////////////////////////////////
 
 
 int main() {
-    // Exemplo de padrão de expressão regular para teste
     const char *regex_pattern = "a(b|c)";
-
-    // Criar o objeto Regex usando o padrão
     Regex *regex = createRegex(regex_pattern);
     if (regex == NULL) {
         fprintf(stderr, "Erro ao criar o objeto Regex com o padrão: %s\n", regex_pattern);
         return 1;
     }
-
-    // Imprimir o padrão da expressão regular (opcional, apenas para verificação)
     printf("Padrão da regex: %s\n", getRegexPattern(regex));
-
-    // Converter o padrão de regex para a notação postfix
     char *postfix = re2post(regex);
     if (postfix == NULL) {
         fprintf(stderr, "Erro ao converter o padrão de regex para postfix: %s\n", regex_pattern);
         freeRegex(regex);
         return 1;
     }
-
-    // Contador de estados no NFA
     int nstate;
-
-    // Construir o NFA a partir do postfix e obter o número de estados
     State *start_nfa = post2nfa(postfix, &nstate);
     if (start_nfa == NULL) {
         fprintf(stderr, "Erro ao construir NFA a partir do postfix: %s\n", postfix);
+	free(postfix);
         freeRegex(regex);
         return 1;
     }
 
-    // Libera a memória alocada para o postfix, pois não é mais necessário
     free(postfix);
-
-    // Inicializar lista de estados para armazenar estados do NFA
+    
     l1.s = malloc(nstate * sizeof(l1.s[0]));
     if (l1.s == NULL) {
         fprintf(stderr, "Erro ao alocar memória para lista de estados do NFA\n");
@@ -471,7 +484,6 @@ int main() {
         return 1;
     }
 
-    // Inicializar lista de estados para armazenar estados do DFA
     l2.s = malloc(nstate * sizeof(l2.s[0]));
     if (l2.s == NULL) {
         fprintf(stderr, "Erro ao alocar memória para lista de estados do DFA\n");
@@ -480,16 +492,13 @@ int main() {
         freeRegex(regex);
         return 1;
     }
-
-    // Testar match usando NFA para uma string específica
+    
     const char *test_string = "abcd";
     bool match_nfa_result = match_nfa(start_nfa, (char *)test_string);
 
-    // Testar match usando DFA para a mesma string
     DState *start_dfa = startdstate(start_nfa);
     bool match_dfa_result = match_dfa(start_dfa, (char *)test_string);
 
-    // Imprimir o resultado da correspondência para o NFA e DFA
     printf("String \"%s\": ", test_string);
     if (match_nfa_result) {
         printf("Passou no NFA.");
@@ -502,8 +511,8 @@ int main() {
         printf("Nao passou no DFA.\n");
     }
 
-    // Liberar memória alocada para o NFA, DFA e objeto Regex
     freeNFA(start_nfa, nstate);
+    free_DFA(start_dfa);
     free(l1.s);
     free(l2.s);
     freeRegex(regex);
