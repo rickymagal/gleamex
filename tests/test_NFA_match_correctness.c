@@ -20,7 +20,6 @@ void print_test_result(const char* test_input, bool expected, bool actual) {
 int main() {
     // Create a simple NFA
     State* nfa = create_simple_nfa();
-    print_state(nfa, "nfa");
 
     // Define test cases
     const char* test_cases[] = {
