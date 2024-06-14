@@ -5,13 +5,10 @@
 int main() {
     //char *post = "abb.+.a."; //Regex a(bb)+a
     char *post = "abb.+.a.b|"; //Regex a(bb)+a|b
-    int nState = 0;
 
-    State *NFA = post2nfa(post, &nState);
+    State *NFA = post2nfa(post);
 
-    printf("%d\n", nState);
-
-    freeNFA(NFA, nState);
+    freeNFA(NFA);
 
     return 0;
 }

@@ -46,8 +46,7 @@ void test_regex(const char* regex_pattern, const char* test_str, bool expected_r
     printf("Postfix notation for regex '%s': %s\n", regex_pattern, postfix);
 
     // Convert postfix notation to NFA
-    int nstate;
-    State* nfa_start = post2nfa(postfix, &nstate);
+    State* nfa_start = post2nfa(postfix);
     free(postfix);
     if (nfa_start == NULL) {
         printf("Failed to create NFA for regex: %s\n", regex_pattern);
@@ -82,5 +81,5 @@ void test_regex(const char* regex_pattern, const char* test_str, bool expected_r
     }
     // Free memory
     freeRegex(regex);
-    freeNFA(nfa_start, nstate);
+    freeNFA(nfa_start);
 }
