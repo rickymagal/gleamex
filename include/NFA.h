@@ -13,18 +13,9 @@
 typedef struct State State;
 typedef struct DState DState;
 
-State* post2nfa(char *postfix, int *nstate);
+State* post2nfa(char *postfix);
 
-void freeNFA(State *NFA, int nState);
-
-// Manipulate states for testing
-State *create_state(int c, State *out, State *out1);
-int get_state_char(const State *state);
-State *get_state_out(const State *state);
-State *get_state_out1(const State *state);
-int get_state_lastlist(const State *state);
-void print_state(State *s, const char *name);
-void free_state(State *state);
+void freeNFA(State *NFA);
 
 // Simulate NFA
 bool match_nfa(State *start, char *s);

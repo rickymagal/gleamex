@@ -6,13 +6,14 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_STACK_SIZE 1000
+#define MAX_STACK_SIZE 1000 //Frag Stack
 
 #define push(stack, f) *stack++ = f
 #define pop(stack) *--stack
 
-
 ///////////////////////////////// Initial Definitions ///////////////////////////////////////////////////////////////////
+
+///////////////////////////////// Basic Structures ///////////////////////////////////////////////////////////////////
 
 // Structure representing a state in the NFA
 struct State {
@@ -28,49 +29,72 @@ typedef struct
 	Ptrlist *out;
 }Frag;
 
-State matchstate = { Match, NULL, NULL, -1 }; 
+/////////////////////////////// NFA match Structures /////////////////////////////////////////////////////////////////////
+
+// Structure representing a list of NFA states
+typedef struct {
+    struct State **s;  // Array of pointers to NFA states
+    int n;             // Number of states in the list
+} List;
+
+//////////////////////////////////////////////// NFA to DFA and DFA simulation Structures//////////////////////////////////////////
+
+// Structure representing a DFA state
+typedef struct DState {
+    List l;                     // List of NFA states corresponding to this DFA state
+    struct DState *next[256];   // Array of pointers to next DFA states based on input characters
+    struct DState *left;        // Left child in binary tree for caching
+    struct DState *right;       // Right child in binary tree for caching
+} DState;
+
+///////////////////////////////// Needed Global Variables(at the moment)///////////////////////////////////////////////////////////////////
+
+int g_nstate = 0; //Number of states created during post2nfa function
+
+List g_l1 = {NULL, 0}, g_l2 = {NULL, 0};
+
+static int g_listid = 0;
 
 /////////////////////////////////////////////////// POST 2 NFA functions ////////////////////////////////////////////////
 
-State *state(int c, State *out, State *out1) {
-	State *s = malloc(sizeof(State));
+State* create_state(int c, State* out, State* out1) {
+    State* state = (State*)malloc(sizeof(State));
+    if (!state) {
+        return NULL;
+    }
+    state->c = c;
+    state->out = out;
+    state->out1 = out1;
+    state->lastlist = 0;
 
-	if(s == NULL) {
-		return NULL;
-	}
-
-	s->c = c;
-	s->out = out;
-	s->out1 = out1;
-	s->lastlist = 0;
-
-	return s;
+    return state;
 }
 
-Frag frag(State *start, Ptrlist *out) {
+Frag create_frag(State *start, Ptrlist *out) {
 	Frag f = {start, out};
 	return f;
 }
 
-State* post2nfa(char *postfix, int *nstate) {
+State* post2nfa(char *postfix) {
 	char *curr;
-	int listPos = 0, statesC = 0;
+	int listPos = 0;
 	Frag stackStorage[MAX_STACK_SIZE], *stack, e1, e2, e;
 	Ptrlist *allLists[MAX_STACK_SIZE], *l;
 	State *s;
 
 	stack = stackStorage;
 	stack->out = NULL;
+    g_nstate = 0;
 	for(curr = postfix; *curr; curr++) {
 		switch(*curr){
 			default:
-				s = state(*curr, NULL, NULL);
-				statesC += 1;
+				s = create_state(*curr, NULL, NULL);
+				g_nstate += 1;
 
 				l = list1(&s->out);
 				allLists[listPos++] = l;
 
-				push(stack, frag(s, l));
+				push(stack, create_frag(s, l));
 				break;
 
 			case '.': // cocatenate
@@ -79,64 +103,60 @@ State* post2nfa(char *postfix, int *nstate) {
 
 				patch(e1.out, e2.start);
 
-				push(stack, frag(e1.start, e2.out));
+				push(stack, create_frag(e1.start, e2.out));
 				break;
 
 			case '|': // alternate
 				e2 = pop(stack);
 				e1 = pop(stack);
 
-				s = state(Split, e1.start, e2.start);
-				statesC += 1;
+				s = create_state(Split, e1.start, e2.start);
+				g_nstate += 1;
 
-				push(stack, frag(s, append(e1.out, e2.out)));
+				push(stack, create_frag(s, append(e1.out, e2.out)));
 				break;
 
 			case '?': // zero or one
 				e = pop(stack);
 
-				s = state(Split, e.start, NULL);
-				statesC += 1;
+				s = create_state(Split, e.start, NULL);
+				g_nstate += 1;
 
-				push(stack, frag(s, append(e.out, list1(&s->out1))));
+				push(stack, create_frag(s, append(e.out, list1(&s->out1))));
 				break;
 
 			case '*': // zero or more
 				e = pop(stack);
 
-				s = state(Split, e.start, NULL);
-				statesC += 1;
+				s = create_state(Split, e.start, NULL);
+				g_nstate += 1;
 
 				patch(e.out, s);
 				l = list1(&s->out1);
 				allLists[listPos++] = l;
 
-				push(stack, frag(s, l));
+				push(stack, create_frag(s, l));
 				break;
 
 			case '+': // one or more
 				e = pop(stack);
 
-				s = state(Split, e.start, NULL);
-				statesC += 1;
+				s = create_state(Split, e.start, NULL);
+				g_nstate += 1;
 
 				patch(e.out, s);
 				l = list1(&s->out1);
 				allLists[listPos++] = l;
 
-				push(stack, frag(e.start, l));
+				push(stack, create_frag(e.start, l));
 				break;
 		}
 	}
 
 	e = pop(stack);
 
-	patch(e.out, state(Match, NULL, NULL));
-	statesC += 1;
-
-	if(nstate != NULL) {
-		*nstate = statesC;
-	}
+	patch(e.out, create_state(Match, NULL, NULL));
+	g_nstate++;
 
 	for(int i = 0; i < listPos; i++) {
 		freePtrlist(allLists[i]);
@@ -154,90 +174,18 @@ void freeNFARec(State *curr, State *allNfas[], int *idx) {
 	}
 }
 
-void freeNFA(State *NFA, int nState) {
-	State *allStates[nState];
+void freeNFA(State *NFA) {
+	State *allStates[g_nstate];
 	int idx = 0;
 
 	freeNFARec(NFA, allStates, &idx);
 
-	for(int i = 0; i < nState; i++) {
+	for(int i = 0; i < g_nstate; i++) {
 		free(allStates[i]);
 	}
 }
 
-/////////////////////////////// NFA match Structures /////////////////////////////////////////////////////////////////////
-
-// Structure representing a list of NFA states
-typedef struct {
-    struct State **s;  // Array of pointers to NFA states
-    int n;             // Number of states in the list
-} List;
-
-/////////////////////////////// State manipulation functions //////////////////////////////////////////////////////
-
-
-State* create_state(int c, State* out, State* out1) {
-    State* state = (State*)malloc(sizeof(State));
-    if (!state) {
-        return NULL;
-    }
-    state->c = c;
-    state->out = out;
-    state->out1 = out1;
-    return state;
-}
-
-int get_state_char(const struct State *state) {
-    if (state != NULL) {
-        return state->c;
-    }
-    return '\0'; // Return null character if state is NULL
-}
-
-struct State *get_state_out(const struct State *state) {
-    if (state != NULL) {
-        return state->out;
-    }
-    return NULL;
-}
-
-struct State *get_state_out1(const struct State *state) {
-    if (state != NULL) {
-        return state->out1;
-    }
-    return NULL;
-}
-
-// Function to get the lastlist attribute of a State
-int get_state_lastlist(const struct State *state) {
-    if (state != NULL) {
-        return state->lastlist;
-    }
-    return -1; // Return -1 if state is NULL
-}
-
-// Helper function to debug NFA states
-void print_state(State* s, const char* name) {
-    if (s == NULL) {
-        printf("%s: NULL\n", name);
-    } else {
-        printf("%s: State(c=%d, out=%p, out1=%p, lastlist=%d)\n", name, s->c, (void*)s->out, (void*)s->out1, s->lastlist);
-    }
-}
-
-// Function to free memory allocated for a State
-void free_state(State* state) {
-    if (state == NULL) return;
-    free_state(state->out);
-    free_state(state->out1);
-    free(state);
-}
-
 ///////////////////////////////////////////////// NFA Simulation /////////////////////////////////////////////////////////
-
-
-List l1 = {NULL, 0}, l2 = {NULL, 0};
-static int listid = 0;
 
 List* startlist(State *s, List *l);
 void addstate(List *l, State *s);
@@ -247,16 +195,16 @@ int ismatch(List *l);
 List* startlist(State *s, List *l) {
     l->n = 0;
     l->s = NULL;
-    listid++;
+    g_listid++;
     addstate(l, s);
     return l;
 }
-int
-ismatch(List *l)
+
+int ismatch(List *l)
 {
 	int i;
 
-	for(i=0; i<l->n; i++)
+	for(i=0; i < l->n; i++)
 		if(l->s[i]->c == Match)
 			return 1;
 	return 0;
@@ -267,17 +215,17 @@ void addstate(List *l, State *s) {
         printf("Error: state is NULL in addstate\n");
         return;
     }
-    if (s->lastlist == listid) {
+    if (s->lastlist == g_listid) {
         return;
     }
-    s->lastlist = listid;
+    s->lastlist = g_listid;
     if (s->c == Split) {
         addstate(l, s->out);
         addstate(l, s->out1);
         return;
     }
     if (l->s == NULL) {;
-        l->s = malloc(MAX_STACK_SIZE * sizeof(State *));
+        l->s = malloc(g_nstate * sizeof(State *));
         if (l->s == NULL) {
             exit(1);
         }
@@ -285,13 +233,12 @@ void addstate(List *l, State *s) {
     l->s[l->n++] = s;
 }
 
-void
-step(List *clist, int c, List *nlist)
+void step(List *clist, int c, List *nlist)
 {
 	int i;
 	State *s;
 
-	listid++;
+	g_listid++;
 	nlist->n = 0;
 	for(i=0; i<clist->n; i++){
 		s = clist->s[i];
@@ -326,17 +273,7 @@ bool match_nfa(State* start, char* input) {
     }
 }
 
-//////////////////////////////////////////////// NFA to DFA and DFA simulation //////////////////////////////////////////
-
-// Structure representing a DFA state
-typedef struct DState {
-    List l;                     // List of NFA states corresponding to this DFA state
-    struct DState *next[256];   // Array of pointers to next DFA states based on input characters
-    struct DState *left;        // Left child in binary tree for caching
-    struct DState *right;       // Right child in binary tree for caching
-} DState;
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////// NFA to DFA and DFA simulation Structures//////////////////////////////////////////
 static int listcmp(List *l1, List *l2);
 
 
@@ -401,12 +338,12 @@ DState* startdstate(State *start) {
         return NULL;
     }
     alldstates = NULL;
-    return dstate(startlist(start, &l1));
+    return dstate(startlist(start, &g_l1));
 }
 
 DState* nextstate(DState *d, int c) {
-    step(&d->l, c, &l1);
-    DState *new_state = dstate(&l1);
+    step(&d->l, c, &g_l1);
+    DState *new_state = dstate(&g_l1);
     if (new_state == NULL) {
         printf("Error: Failed to create new DFA state for character %c\n", c);
         return NULL;
@@ -500,8 +437,7 @@ int main() {
         }
 
         // Construir o NFA
-        int nstate;
-        State *start_nfa = post2nfa(postfix, &nstate);
+        State *start_nfa = post2nfa(postfix);
         if (start_nfa == NULL) {
             fprintf(stderr, "Erro ao construir NFA a partir do postfix: %s\n", postfix);
             free(postfix);
@@ -523,11 +459,11 @@ int main() {
                match_dfa_result ? "Aceitou" : "Não aceitou");
 
         // Liberar memória
-        freeNFA(start_nfa, nstate);
+        freeNFA(start_nfa);
         free_DFA(start_dfa);
         free(postfix);
-        freeList(l1);
-        freeList(l2);
+        freeList(g_l1);
+        freeList(g_l2);
         freeRegex(regex);
 
         printf("\n");
