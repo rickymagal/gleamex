@@ -236,7 +236,7 @@ void free_state(State* state) {
 ///////////////////////////////////////////////// NFA Simulation /////////////////////////////////////////////////////////
 
 
-List l1, l2;
+List l1 = {NULL, 0}, l2 = {NULL, 0};
 static int listid = 0;
 
 List* startlist(State *s, List *l);
@@ -246,6 +246,7 @@ int ismatch(List *l);
 
 List* startlist(State *s, List *l) {
     l->n = 0;
+    l->s = NULL;
     listid++;
     addstate(l, s);
     return l;
@@ -283,6 +284,7 @@ void addstate(List *l, State *s) {
     }
     l->s[l->n++] = s;
 }
+
 void
 step(List *clist, int c, List *nlist)
 {
@@ -296,6 +298,12 @@ step(List *clist, int c, List *nlist)
 		if(s->c == c)
 			addstate(nlist, s->out);
 	}
+}
+
+void freeList(List l) {
+    if(l.s !=  NULL) {
+        free(l.s);
+    }
 }
 
 bool match_nfa(State* start, char* input) {
@@ -392,6 +400,7 @@ DState* startdstate(State *start) {
         printf("Error: start state is NULL\n");
         return NULL;
     }
+    alldstates = NULL;
     return dstate(startlist(start, &l1));
 }
 
@@ -450,71 +459,79 @@ void free_DFA(DState *start_dfa) {
 
 ////////////////////////////////////////////////////////// Main //////////////////////////////////////////////////////////
 
+typedef struct {
+    const char *regex_pattern;
+    const char *test_string;
+} TestCase;
+
 int main() {
-    const char *regex_pattern = "a(b|c|d)*e(f|g|h)+";
-    Regex *regex = createRegex(regex_pattern);
-    if (regex == NULL) {
-        fprintf(stderr, "Erro ao criar o objeto Regex com o padrão: %s\n", regex_pattern);
-        return 1;
-    }
-    printf("Padrão da regex: %s\n", getRegexPattern(regex));
-    char *postfix = re2post(regex);
-    if (postfix == NULL) {
-        fprintf(stderr, "Erro ao converter o padrão de regex para postfix: %s\n", regex_pattern);
-        freeRegex(regex);
-        return 1;
-    }
-    int nstate;
-    State *start_nfa = post2nfa(postfix, &nstate);
-    if (start_nfa == NULL) {
-        fprintf(stderr, "Erro ao construir NFA a partir do postfix: %s\n", postfix);
-	free(postfix);
-        freeRegex(regex);
-        return 1;
-    }
+    // Definindo os casos de teste
+    TestCase test_cases[10] = {
+        {"a(b|c|d)*e(f|g|h)+", "abcbcbdefgh"},
+        {"(ab)*", "ababab"},
+        {"(ab)*", "abababa"},
+        {"a(b|c)*d", "abbbcd"},
+        {"a(b|c)*d", "abbbcdx"},
+        {"(x|y)*z", "xyxyxyz"},
+        {"(x|y)*z", "xyzxyzx"},
+        {"[0-9]*", "12345"},
+        {"[0-9]*", "12a45"},
+        {"(cat|dog|bird)", "cat"},
+    };
 
-    free(postfix);
-    
-    l1.s = malloc(nstate * sizeof(l1.s[0]));
-    if (l1.s == NULL) {
-        fprintf(stderr, "Erro ao alocar memória para lista de estados do NFA\n");
+    // Iterar sobre os casos de teste
+    for (int i = 0; i < 10; ++i) {
+        const char *regex_pattern = test_cases[i].regex_pattern;
+        const char *test_string = test_cases[i].test_string;
+
+        // Criar a regex
+        Regex *regex = createRegex(regex_pattern);
+        if (regex == NULL) {
+            fprintf(stderr, "Erro ao criar o objeto Regex com o padrão: %s\n", regex_pattern);
+            continue;
+        }
+
+        // Converter para postfix
+        char *postfix = re2post(regex);
+        if (postfix == NULL) {
+            fprintf(stderr, "Erro ao converter o padrão de regex para postfix: %s\n", regex_pattern);
+            freeRegex(regex);
+            continue;
+        }
+
+        // Construir o NFA
+        int nstate;
+        State *start_nfa = post2nfa(postfix, &nstate);
+        if (start_nfa == NULL) {
+            fprintf(stderr, "Erro ao construir NFA a partir do postfix: %s\n", postfix);
+            free(postfix);
+            freeRegex(regex);
+            continue;
+        }
+
+        // Executar o NFA match
+        bool match_nfa_result = match_nfa(start_nfa, (char *)test_string);
+        printf("Teste %d - String \"%s\": NFA: %s\n", i + 1, test_string,
+               match_nfa_result ? "Aceitou" : "Não aceitou");
+
+        // Construir o DFA
+        DState *start_dfa = startdstate(start_nfa);
+
+        // Executar o DFA match
+        bool match_dfa_result = match_dfa(start_dfa, (char *)test_string);
+        printf("               DFA: %s\n", 
+               match_dfa_result ? "Aceitou" : "Não aceitou");
+
+        // Liberar memória
         freeNFA(start_nfa, nstate);
+        free_DFA(start_dfa);
+        free(postfix);
+        freeList(l1);
+        freeList(l2);
         freeRegex(regex);
-        return 1;
-    }
 
-    l2.s = malloc(nstate * sizeof(l2.s[0]));
-    if (l2.s == NULL) {
-        fprintf(stderr, "Erro ao alocar memória para lista de estados do DFA\n");
-        freeNFA(start_nfa, nstate);
-        free(l1.s);
-        freeRegex(regex);
-        return 1;
+        printf("\n");
     }
-    
-    const char *test_string = "abcbcbdefgh";
-    bool match_nfa_result = match_nfa(start_nfa, (char *)test_string);
-
-    DState *start_dfa = startdstate(start_nfa);
-    bool match_dfa_result = match_dfa(start_dfa, (char *)test_string);
-
-    printf("String \"%s\": ", test_string);
-    if (match_nfa_result) {
-        printf("Passou no NFA.");
-    } else {
-        printf("Nao passou no NFA.");
-    }
-    if (match_dfa_result) {
-        printf("Passou no DFA.\n");
-    } else {
-        printf("Nao passou no DFA.\n");
-    }
-
-    freeNFA(start_nfa, nstate);
-    free_DFA(start_dfa);
-    free(l1.s);
-    free(l2.s);
-    freeRegex(regex);
 
     return 0;
 }
