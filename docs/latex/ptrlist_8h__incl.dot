@@ -1,0 +1,17 @@
+digraph "include/ptrlist.h"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="include/ptrlist.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Fornece funções para o pointerlist (Ptrlist) que é uma lista de ponteiros de estados da NFA."];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid"];
+  Node2 [label="NFA.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$NFA_8h.html",tooltip="Fornece as funções da NFA e da DFA A NFA (nondeterministic finite automata) e a DFA (deterministic fi..."];
+  Node2 -> Node1 [color="midnightblue",fontsize="10",style="solid"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node3 [label="regex.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$regex_8h.html",tooltip="Fornece as funções para a struct Regex que valida uma regex dada."];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid"];
+  Node4 [label="stdbool.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node2 -> Node4 [color="midnightblue",fontsize="10",style="solid"];
+  Node2 -> Node5 [color="midnightblue",fontsize="10",style="solid"];
+  Node5 [label="stdio.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+}

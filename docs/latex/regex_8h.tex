@@ -1,0 +1,146 @@
+\hypertarget{regex_8h}{}\doxysection{Referência do Arquivo include/regex.h}
+\label{regex_8h}\index{include/regex.h@{include/regex.h}}
+
+
+Fornece as funções para a struct \mbox{\hyperlink{structRegex}{Regex}} que valida uma regex dada.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+Gráfico de dependência de inclusões para regex.\+h\+:
+% FIG 0
+Este grafo mostra quais arquivos estão direta ou indiretamente relacionados com esse arquivo\+:
+% FIG 1
+\doxysubsection*{Definições e Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{regex_8h_af36fdd52b0091aa52281c643626f4629}\label{regex_8h_af36fdd52b0091aa52281c643626f4629}} 
+\#define {\bfseries MAX\+\_\+\+REGEX\+\_\+\+LENGTH}~1000
+\end{DoxyCompactItemize}
+\doxysubsection*{Definições de Tipos}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{regex_8h_a486ae933c238dc40e9f99b7ea9b28536}\label{regex_8h_a486ae933c238dc40e9f99b7ea9b28536}} 
+typedef struct \mbox{\hyperlink{structRegex}{Regex}} \mbox{\hyperlink{regex_8h_a486ae933c238dc40e9f99b7ea9b28536}{Regex}}
+\begin{DoxyCompactList}\small\item\em Definição da struct \mbox{\hyperlink{structRegex}{Regex}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Funções}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structRegex}{Regex}} $\ast$ \mbox{\hyperlink{regex_8h_accf0106ccb350c43fa80447f55f1c0c3}{create\+Regex}} (const char $\ast$pattern)
+\begin{DoxyCompactList}\small\item\em Cria uma struct \mbox{\hyperlink{structRegex}{Regex}} para validar se uma string de regex dada é válida Se a string da regex dada for inválida, retorna Null, caso contrário retorna a struct da \mbox{\hyperlink{structRegex}{Regex}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{regex_8h_aeba4dd39ba9653bbf2f2341552fc2a6c}{free\+Regex}} (\mbox{\hyperlink{structRegex}{Regex}} $\ast$regex)
+\begin{DoxyCompactList}\small\item\em Libera a memória de ums struct \mbox{\hyperlink{structRegex}{Regex}}. \end{DoxyCompactList}\item 
+const char $\ast$ \mbox{\hyperlink{regex_8h_ad359032c6949a13d12dcea6d65064206}{get\+Regex\+Pattern}} (const \mbox{\hyperlink{structRegex}{Regex}} $\ast$regex)
+\begin{DoxyCompactList}\small\item\em Retorna qual a string da regex que uma struct \mbox{\hyperlink{structRegex}{Regex}} representa. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Descrição detalhada}
+Fornece as funções para a struct \mbox{\hyperlink{structRegex}{Regex}} que valida uma regex dada. 
+
+\begin{DoxyAuthor}{Autor}
+Alan Texeira da Costa, Johann Jakob Schmitz Bastos, Ricardo Magalhães Santos filho 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Versão}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Data}
+2024-\/06-\/19
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2024 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Funções}
+\mbox{\Hypertarget{regex_8h_accf0106ccb350c43fa80447f55f1c0c3}\label{regex_8h_accf0106ccb350c43fa80447f55f1c0c3}} 
+\index{regex.h@{regex.h}!createRegex@{createRegex}}
+\index{createRegex@{createRegex}!regex.h@{regex.h}}
+\doxysubsubsection{\texorpdfstring{createRegex()}{createRegex()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structRegex}{Regex}}$\ast$ create\+Regex (\begin{DoxyParamCaption}\item[{const char $\ast$}]{pattern }\end{DoxyParamCaption})}
+
+
+
+Cria uma struct \mbox{\hyperlink{structRegex}{Regex}} para validar se uma string de regex dada é válida Se a string da regex dada for inválida, retorna Null, caso contrário retorna a struct da \mbox{\hyperlink{structRegex}{Regex}}. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em pattern} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+Regex$\ast$ 
+\end{DoxyReturn}
+
+
+Definição na linha 9 do arquivo regex.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{9                                         \{}
+\DoxyCodeLine{10     \textcolor{keywordflow}{if} (pattern == NULL || strlen(pattern) >= MAX\_REGEX\_LENGTH) \{}
+\DoxyCodeLine{11         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{12     \}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14     \mbox{\hyperlink{structRegex}{Regex}} *regex = (\mbox{\hyperlink{structRegex}{Regex}} *)malloc(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structRegex}{Regex}}));}
+\DoxyCodeLine{15     \textcolor{keywordflow}{if} (regex != NULL) \{}
+\DoxyCodeLine{16         strncpy(regex-\/>pattern, pattern, MAX\_REGEX\_LENGTH -\/ 1);}
+\DoxyCodeLine{17         regex-\/>pattern[MAX\_REGEX\_LENGTH -\/ 1] = \textcolor{charliteral}{'\(\backslash\)0'}; }
+\DoxyCodeLine{18     \}}
+\DoxyCodeLine{19     \textcolor{keywordflow}{return} regex;}
+\DoxyCodeLine{20 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{regex_8h_aeba4dd39ba9653bbf2f2341552fc2a6c}\label{regex_8h_aeba4dd39ba9653bbf2f2341552fc2a6c}} 
+\index{regex.h@{regex.h}!freeRegex@{freeRegex}}
+\index{freeRegex@{freeRegex}!regex.h@{regex.h}}
+\doxysubsubsection{\texorpdfstring{freeRegex()}{freeRegex()}}
+{\footnotesize\ttfamily void free\+Regex (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structRegex}{Regex}} $\ast$}]{regex }\end{DoxyParamCaption})}
+
+
+
+Libera a memória de ums struct \mbox{\hyperlink{structRegex}{Regex}}. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em regex} & \\
+\hline
+\end{DoxyParams}
+
+
+Definição na linha 22 do arquivo regex.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{22                              \{}
+\DoxyCodeLine{23     free(regex);}
+\DoxyCodeLine{24 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{regex_8h_ad359032c6949a13d12dcea6d65064206}\label{regex_8h_ad359032c6949a13d12dcea6d65064206}} 
+\index{regex.h@{regex.h}!getRegexPattern@{getRegexPattern}}
+\index{getRegexPattern@{getRegexPattern}!regex.h@{regex.h}}
+\doxysubsubsection{\texorpdfstring{getRegexPattern()}{getRegexPattern()}}
+{\footnotesize\ttfamily const char$\ast$ get\+Regex\+Pattern (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structRegex}{Regex}} $\ast$}]{regex }\end{DoxyParamCaption})}
+
+
+
+Retorna qual a string da regex que uma struct \mbox{\hyperlink{structRegex}{Regex}} representa. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em regex} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+const char$\ast$ 
+\end{DoxyReturn}
+
+
+Definição na linha 26 do arquivo regex.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{26                                                 \{}
+\DoxyCodeLine{27     \textcolor{keywordflow}{return} regex-\/>pattern;}
+\DoxyCodeLine{28 \}}
+
+\end{DoxyCode}

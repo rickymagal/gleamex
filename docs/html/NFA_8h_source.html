@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Gleamex: Código-Fonte de include/NFA.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Gleamex
+   &#160;<span id="projectnumber">v0.0.1</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Gerado por Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Busca','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Busca');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">NFA.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="NFA_8h.html">Vá para a documentação desse arquivo.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="NFA_8h.html#ae0dc3df6869dade9f6f9ed8bad2c0193">    1</a></span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef NFA_H</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define NFA_H</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ptrlist_8h.html">ptrlist.h</a>&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="regex_8h.html">regex.h</a>&quot;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#define Split (257)</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#define Match (256)</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">// Forward declaration of State struct to avoid circular dependency</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structState.html">State</a> <a class="code" href="structState.html">State</a>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">// Forward declaration of State struct to avoid circular dependency</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structDState.html">DState</a> <a class="code" href="structDState.html">DState</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<a class="code" href="structState.html">State</a>* <a class="code" href="NFA_8h.html#afb11f15db1cbbee469a3b5b167151596">post2nfa</a>(<span class="keywordtype">char</span> *postfix);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keywordtype">void</span> <a class="code" href="NFA_8h.html#ac7371a96d728b28d91904927862ef7d5">freeNFA</a>(<a class="code" href="structState.html">State</a> *NFA);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="NFA_8h.html#ab8aa9666ddd1e47ca62c858e6553aa11">match_nfa</a>(<a class="code" href="structState.html">State</a> *start, <span class="keywordtype">char</span> *s);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<a class="code" href="structDState.html">DState</a>* <a class="code" href="NFA_8h.html#a7295d8d61910c884e85c91131e3072ab">startdstate</a>(<a class="code" href="structState.html">State</a> *start);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="NFA_8h.html#a40ebc22481cd90a11507987fd7d33d54">match_dfa</a>(<a class="code" href="structDState.html">DState</a> *start, <span class="keywordtype">char</span> *s);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="keywordtype">void</span> <a class="code" href="NFA_8h.html#af4a837c2127aa34d0207a50fedb13d8e">free_DFA</a>(<a class="code" href="structDState.html">DState</a> *d);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aNFA_8h_html_a40ebc22481cd90a11507987fd7d33d54"><div class="ttname"><a href="NFA_8h.html#a40ebc22481cd90a11507987fd7d33d54">match_dfa</a></div><div class="ttdeci">bool match_dfa(DState *start, char *s)</div><div class="ttdoc">Executa a DFA em uma string A DFA representa a regex em uma string. O retorno é true caso encontre um...</div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00354">NFA.c:354</a></div></div>
+<div class="ttc" id="aNFA_8h_html_a7295d8d61910c884e85c91131e3072ab"><div class="ttname"><a href="NFA_8h.html#a7295d8d61910c884e85c91131e3072ab">startdstate</a></div><div class="ttdeci">DState * startdstate(State *start)</div><div class="ttdoc">Converte uma NFA em uma DFA.</div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00335">NFA.c:335</a></div></div>
+<div class="ttc" id="aNFA_8h_html_ab8aa9666ddd1e47ca62c858e6553aa11"><div class="ttname"><a href="NFA_8h.html#ab8aa9666ddd1e47ca62c858e6553aa11">match_nfa</a></div><div class="ttdeci">bool match_nfa(State *start, char *s)</div><div class="ttdoc">Executa a NFA em uma string A NFA representa a regex em uma string. O retorno é true caso encontre um...</div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00256">NFA.c:256</a></div></div>
+<div class="ttc" id="aNFA_8h_html_ac7371a96d728b28d91904927862ef7d5"><div class="ttname"><a href="NFA_8h.html#ac7371a96d728b28d91904927862ef7d5">freeNFA</a></div><div class="ttdeci">void freeNFA(State *NFA)</div><div class="ttdoc">Libera a memória alocada para uma NFA.</div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00177">NFA.c:177</a></div></div>
+<div class="ttc" id="aNFA_8h_html_af4a837c2127aa34d0207a50fedb13d8e"><div class="ttname"><a href="NFA_8h.html#af4a837c2127aa34d0207a50fedb13d8e">free_DFA</a></div><div class="ttdeci">void free_DFA(DState *d)</div><div class="ttdoc">Libera a memória alocada para uma DFA.</div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00382">NFA.c:382</a></div></div>
+<div class="ttc" id="aNFA_8h_html_afb11f15db1cbbee469a3b5b167151596"><div class="ttname"><a href="NFA_8h.html#afb11f15db1cbbee469a3b5b167151596">post2nfa</a></div><div class="ttdeci">State * post2nfa(char *postfix)</div><div class="ttdoc">Converte uma regex pós fixada em um NFA.</div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00078">NFA.c:78</a></div></div>
+<div class="ttc" id="aptrlist_8h_html"><div class="ttname"><a href="ptrlist_8h.html">ptrlist.h</a></div><div class="ttdoc">Fornece funções para o pointerlist (Ptrlist) que é uma lista de ponteiros de estados da NFA.</div></div>
+<div class="ttc" id="aregex_8h_html"><div class="ttname"><a href="regex_8h.html">regex.h</a></div><div class="ttdoc">Fornece as funções para a struct Regex que valida uma regex dada.</div></div>
+<div class="ttc" id="astructDState_html"><div class="ttname"><a href="structDState.html">DState</a></div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00043">NFA.c:43</a></div></div>
+<div class="ttc" id="astructState_html"><div class="ttname"><a href="structState.html">State</a></div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00019">NFA.c:19</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Gerado por&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>

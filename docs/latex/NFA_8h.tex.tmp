@@ -1,0 +1,382 @@
+\hypertarget{NFA_8h}{}\doxysection{Referência do Arquivo include/\+NFA.h}
+\label{NFA_8h}\index{include/NFA.h@{include/NFA.h}}
+
+
+Fornece as funções da NFA e da DFA A NFA (nondeterministic finite automata) e a DFA (deterministic finite automata) são usadas para computar a \mbox{\hyperlink{structRegex}{Regex}}.  
+
+
+{\ttfamily \#include \char`\"{}ptrlist.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}regex.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+Gráfico de dependência de inclusões para NFA.\+h\+:
+% FIG 0
+Este grafo mostra quais arquivos estão direta ou indiretamente relacionados com esse arquivo\+:
+% FIG 1
+\doxysubsection*{Definições e Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{NFA_8h_a1944a2741ae2153bf82833987b6e7d04}\label{NFA_8h_a1944a2741ae2153bf82833987b6e7d04}} 
+\#define {\bfseries Split}~(257)
+\item 
+\mbox{\Hypertarget{NFA_8h_ac043625703e186a4092aad41ff80ae95}\label{NFA_8h_ac043625703e186a4092aad41ff80ae95}} 
+\#define {\bfseries Match}~(256)
+\end{DoxyCompactItemize}
+\doxysubsection*{Definições de Tipos}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{NFA_8h_aae671ea028d612abfaf230eb64495ca0}\label{NFA_8h_aae671ea028d612abfaf230eb64495ca0}} 
+typedef struct \mbox{\hyperlink{structState}{State}} \mbox{\hyperlink{NFA_8h_aae671ea028d612abfaf230eb64495ca0}{State}}
+\begin{DoxyCompactList}\small\item\em Define a struct \mbox{\hyperlink{structState}{State}} que é usada para montar uma árvore NFA. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{NFA_8h_ae0dc3df6869dade9f6f9ed8bad2c0193}\label{NFA_8h_ae0dc3df6869dade9f6f9ed8bad2c0193}} 
+typedef struct \mbox{\hyperlink{structDState}{DState}} \mbox{\hyperlink{NFA_8h_ae0dc3df6869dade9f6f9ed8bad2c0193}{DState}}
+\begin{DoxyCompactList}\small\item\em Define a struct \mbox{\hyperlink{structDState}{DState}} que é usada para montar uma árvore DFA. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Funções}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structState}{State}} $\ast$ \mbox{\hyperlink{NFA_8h_afb11f15db1cbbee469a3b5b167151596}{post2nfa}} (char $\ast$postfix)
+\begin{DoxyCompactList}\small\item\em Converte uma regex pós fixada em um NFA. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{NFA_8h_ac7371a96d728b28d91904927862ef7d5}{free\+NFA}} (\mbox{\hyperlink{structState}{State}} $\ast$NFA)
+\begin{DoxyCompactList}\small\item\em Libera a memória alocada para uma NFA. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{NFA_8h_ab8aa9666ddd1e47ca62c858e6553aa11}{match\+\_\+nfa}} (\mbox{\hyperlink{structState}{State}} $\ast$start, char $\ast$s)
+\begin{DoxyCompactList}\small\item\em Executa a NFA em uma string A NFA representa a regex em uma string. O retorno é true caso encontre um estado de aceitação e false caso contrário. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structDState}{DState}} $\ast$ \mbox{\hyperlink{NFA_8h_a7295d8d61910c884e85c91131e3072ab}{startdstate}} (\mbox{\hyperlink{structState}{State}} $\ast$start)
+\begin{DoxyCompactList}\small\item\em Converte uma NFA em uma DFA. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{NFA_8h_a40ebc22481cd90a11507987fd7d33d54}{match\+\_\+dfa}} (\mbox{\hyperlink{structDState}{DState}} $\ast$start, char $\ast$s)
+\begin{DoxyCompactList}\small\item\em Executa a DFA em uma string A DFA representa a regex em uma string. O retorno é true caso encontre um estado de aceitação e false caso contrário. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{NFA_8h_af4a837c2127aa34d0207a50fedb13d8e}{free\+\_\+\+DFA}} (\mbox{\hyperlink{structDState}{DState}} $\ast$d)
+\begin{DoxyCompactList}\small\item\em Libera a memória alocada para uma DFA. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Descrição detalhada}
+Fornece as funções da NFA e da DFA A NFA (nondeterministic finite automata) e a DFA (deterministic finite automata) são usadas para computar a \mbox{\hyperlink{structRegex}{Regex}}. 
+
+\begin{DoxyAuthor}{Autor}
+Alan Texeira da Costa, Johann Jakob Schmitz Bastos, Ricardo Magalhães Santos filho 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Versão}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Data}
+2024-\/06-\/19
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2024 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Funções}
+\mbox{\Hypertarget{NFA_8h_af4a837c2127aa34d0207a50fedb13d8e}\label{NFA_8h_af4a837c2127aa34d0207a50fedb13d8e}} 
+\index{NFA.h@{NFA.h}!free\_DFA@{free\_DFA}}
+\index{free\_DFA@{free\_DFA}!NFA.h@{NFA.h}}
+\doxysubsubsection{\texorpdfstring{free\_DFA()}{free\_DFA()}}
+{\footnotesize\ttfamily void free\+\_\+\+DFA (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structDState}{DState}} $\ast$}]{d }\end{DoxyParamCaption})}
+
+
+
+Libera a memória alocada para uma DFA. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em NFA} & \\
+\hline
+\end{DoxyParams}
+
+
+Definição na linha 382 do arquivo NFA.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{382                                  \{}
+\DoxyCodeLine{383     \textcolor{keywordflow}{if} (start\_dfa == NULL) \{}
+\DoxyCodeLine{384         \textcolor{keywordflow}{return};}
+\DoxyCodeLine{385     \}}
+\DoxyCodeLine{386 }
+\DoxyCodeLine{387     \mbox{\hyperlink{structDState}{DState}} *allDStates[MAX\_STACK\_SIZE]; }
+\DoxyCodeLine{388     \textcolor{keywordtype}{int} idx = 0;}
+\DoxyCodeLine{389     free\_DFA\_rec(start\_dfa, allDStates, \&idx);}
+\DoxyCodeLine{390 }
+\DoxyCodeLine{391     \textcolor{comment}{// Libera todos os estados coletados na lista}}
+\DoxyCodeLine{392     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < idx; i++) \{}
+\DoxyCodeLine{393         free(allDStates[i]);}
+\DoxyCodeLine{394     \}}
+\DoxyCodeLine{395 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{NFA_8h_ac7371a96d728b28d91904927862ef7d5}\label{NFA_8h_ac7371a96d728b28d91904927862ef7d5}} 
+\index{NFA.h@{NFA.h}!freeNFA@{freeNFA}}
+\index{freeNFA@{freeNFA}!NFA.h@{NFA.h}}
+\doxysubsubsection{\texorpdfstring{freeNFA()}{freeNFA()}}
+{\footnotesize\ttfamily void free\+NFA (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structState}{State}} $\ast$}]{NFA }\end{DoxyParamCaption})}
+
+
+
+Libera a memória alocada para uma NFA. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em NFA} & \\
+\hline
+\end{DoxyParams}
+
+
+Definição na linha 177 do arquivo NFA.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{177                          \{}
+\DoxyCodeLine{178     \mbox{\hyperlink{structState}{State}} *allStates[g\_nstate];}
+\DoxyCodeLine{179     \textcolor{keywordtype}{int} idx = 0;}
+\DoxyCodeLine{180 }
+\DoxyCodeLine{181     freeNFARec(NFA, allStates, \&idx);}
+\DoxyCodeLine{182 }
+\DoxyCodeLine{183     \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < g\_nstate; i++) \{}
+\DoxyCodeLine{184         free(allStates[i]);}
+\DoxyCodeLine{185     \}}
+\DoxyCodeLine{186 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{NFA_8h_a40ebc22481cd90a11507987fd7d33d54}\label{NFA_8h_a40ebc22481cd90a11507987fd7d33d54}} 
+\index{NFA.h@{NFA.h}!match\_dfa@{match\_dfa}}
+\index{match\_dfa@{match\_dfa}!NFA.h@{NFA.h}}
+\doxysubsubsection{\texorpdfstring{match\_dfa()}{match\_dfa()}}
+{\footnotesize\ttfamily bool match\+\_\+dfa (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structDState}{DState}} $\ast$}]{start,  }\item[{char $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Executa a DFA em uma string A DFA representa a regex em uma string. O retorno é true caso encontre um estado de aceitação e false caso contrário. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em start} & \\
+\hline
+{\em s} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+true 
+
+false 
+\end{DoxyReturn}
+
+
+Definição na linha 354 do arquivo NFA.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{354                                        \{}
+\DoxyCodeLine{355     \mbox{\hyperlink{structDState}{DState}} *d = start;}
+\DoxyCodeLine{356     \mbox{\hyperlink{structDState}{DState}} *next;}
+\DoxyCodeLine{357     \textcolor{keywordtype}{int} c;}
+\DoxyCodeLine{358     }
+\DoxyCodeLine{359     \textcolor{keywordflow}{for} (; *s; s++) \{}
+\DoxyCodeLine{360         c = *s \& 0xFF;}
+\DoxyCodeLine{361         \textcolor{keywordflow}{if} ((next = d-\/>next[c]) == NULL) \{}
+\DoxyCodeLine{362             next = nextstate(d, c);}
+\DoxyCodeLine{363         \}}
+\DoxyCodeLine{364         d = next;}
+\DoxyCodeLine{365     \}}
+\DoxyCodeLine{366     }
+\DoxyCodeLine{367     \textcolor{keywordtype}{bool} result = ismatch(\&d-\/>l);}
+\DoxyCodeLine{368     \textcolor{keywordflow}{return} result;}
+\DoxyCodeLine{369 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{NFA_8h_ab8aa9666ddd1e47ca62c858e6553aa11}\label{NFA_8h_ab8aa9666ddd1e47ca62c858e6553aa11}} 
+\index{NFA.h@{NFA.h}!match\_nfa@{match\_nfa}}
+\index{match\_nfa@{match\_nfa}!NFA.h@{NFA.h}}
+\doxysubsubsection{\texorpdfstring{match\_nfa()}{match\_nfa()}}
+{\footnotesize\ttfamily bool match\+\_\+nfa (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structState}{State}} $\ast$}]{start,  }\item[{char $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Executa a NFA em uma string A NFA representa a regex em uma string. O retorno é true caso encontre um estado de aceitação e false caso contrário. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em start} & \\
+\hline
+{\em s} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+true 
+
+false 
+\end{DoxyReturn}
+
+
+Definição na linha 256 do arquivo NFA.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{256                                           \{}
+\DoxyCodeLine{257     \textcolor{keywordflow}{if} (start == NULL) \{}
+\DoxyCodeLine{258         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{259     \}}
+\DoxyCodeLine{260 }
+\DoxyCodeLine{261     \textcolor{keywordflow}{if} (start-\/>c == Match) \{}
+\DoxyCodeLine{262         \textcolor{keywordflow}{return} *input == \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{263     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (start-\/>c == Split) \{}
+\DoxyCodeLine{264         \textcolor{keywordflow}{return} \mbox{\hyperlink{NFA_8h_ab8aa9666ddd1e47ca62c858e6553aa11}{match\_nfa}}(start-\/>out, input) || \mbox{\hyperlink{NFA_8h_ab8aa9666ddd1e47ca62c858e6553aa11}{match\_nfa}}(start-\/>out1, input);}
+\DoxyCodeLine{265     \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{266         \textcolor{keywordflow}{if} (*input == \textcolor{charliteral}{'\(\backslash\)0'}) \{}
+\DoxyCodeLine{267             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{268         \}}
+\DoxyCodeLine{269         \textcolor{keywordflow}{if} (start-\/>c == *input) \{}
+\DoxyCodeLine{270             \textcolor{keywordflow}{return} \mbox{\hyperlink{NFA_8h_ab8aa9666ddd1e47ca62c858e6553aa11}{match\_nfa}}(start-\/>out, input + 1);}
+\DoxyCodeLine{271         \}}
+\DoxyCodeLine{272         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{273     \}}
+\DoxyCodeLine{274 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{NFA_8h_afb11f15db1cbbee469a3b5b167151596}\label{NFA_8h_afb11f15db1cbbee469a3b5b167151596}} 
+\index{NFA.h@{NFA.h}!post2nfa@{post2nfa}}
+\index{post2nfa@{post2nfa}!NFA.h@{NFA.h}}
+\doxysubsubsection{\texorpdfstring{post2nfa()}{post2nfa()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structState}{State}}$\ast$ post2nfa (\begin{DoxyParamCaption}\item[{char $\ast$}]{postfix }\end{DoxyParamCaption})}
+
+
+
+Converte uma regex pós fixada em um NFA. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em postfix} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+State$\ast$ 
+\end{DoxyReturn}
+
+
+Definição na linha 78 do arquivo NFA.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{78                                \{}
+\DoxyCodeLine{79     \textcolor{keywordtype}{char} *curr;}
+\DoxyCodeLine{80     \textcolor{keywordtype}{int} listPos = 0;}
+\DoxyCodeLine{81     \mbox{\hyperlink{structFrag}{Frag}} stackStorage[MAX\_STACK\_SIZE], *stack, e1, e2, e;}
+\DoxyCodeLine{82     \mbox{\hyperlink{structPtrlist}{Ptrlist}} *allLists[MAX\_STACK\_SIZE], *l;}
+\DoxyCodeLine{83     \mbox{\hyperlink{structState}{State}} *s;}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85     stack = stackStorage;}
+\DoxyCodeLine{86     stack-\/>out = NULL;}
+\DoxyCodeLine{87     g\_nstate = 0;}
+\DoxyCodeLine{88     \textcolor{keywordflow}{for}(curr = postfix; *curr; curr++) \{}
+\DoxyCodeLine{89         \textcolor{keywordflow}{switch}(*curr)\{}
+\DoxyCodeLine{90             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{91                 s = create\_state(*curr, NULL, NULL);}
+\DoxyCodeLine{92                 g\_nstate += 1;}
+\DoxyCodeLine{93 }
+\DoxyCodeLine{94                 l = \mbox{\hyperlink{ptrlist_8h_a916360e2ee72e5a69a2cc056a983fb27}{list1}}(\&s-\/>out);}
+\DoxyCodeLine{95                 allLists[listPos++] = l;}
+\DoxyCodeLine{96 }
+\DoxyCodeLine{97                 push(stack, create\_frag(s, l));}
+\DoxyCodeLine{98                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{99 }
+\DoxyCodeLine{100             \textcolor{keywordflow}{case} \textcolor{charliteral}{'.'}: \textcolor{comment}{// cocatenate}}
+\DoxyCodeLine{101                 e2 = pop(stack);}
+\DoxyCodeLine{102                 e1 = pop(stack);}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104                 \mbox{\hyperlink{ptrlist_8h_a29f3679969d9fba856a03eb6e5d571e1}{patch}}(e1.out, e2.start);}
+\DoxyCodeLine{105 }
+\DoxyCodeLine{106                 push(stack, create\_frag(e1.start, e2.out));}
+\DoxyCodeLine{107                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{108 }
+\DoxyCodeLine{109             \textcolor{keywordflow}{case} \textcolor{charliteral}{'|'}: \textcolor{comment}{// alternate}}
+\DoxyCodeLine{110                 e2 = pop(stack);}
+\DoxyCodeLine{111                 e1 = pop(stack);}
+\DoxyCodeLine{112 }
+\DoxyCodeLine{113                 s = create\_state(Split, e1.start, e2.start);}
+\DoxyCodeLine{114                 g\_nstate += 1;}
+\DoxyCodeLine{115 }
+\DoxyCodeLine{116                 push(stack, create\_frag(s, \mbox{\hyperlink{ptrlist_8h_a09c913ffa972c186b35e79965c08d8df}{append}}(e1.out, e2.out)));}
+\DoxyCodeLine{117                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{118 }
+\DoxyCodeLine{119             \textcolor{keywordflow}{case} \textcolor{charliteral}{'?'}: \textcolor{comment}{// zero or one}}
+\DoxyCodeLine{120                 e = pop(stack);}
+\DoxyCodeLine{121 }
+\DoxyCodeLine{122                 s = create\_state(Split, e.start, NULL);}
+\DoxyCodeLine{123                 g\_nstate += 1;}
+\DoxyCodeLine{124 }
+\DoxyCodeLine{125                 push(stack, create\_frag(s, \mbox{\hyperlink{ptrlist_8h_a09c913ffa972c186b35e79965c08d8df}{append}}(e.out, \mbox{\hyperlink{ptrlist_8h_a916360e2ee72e5a69a2cc056a983fb27}{list1}}(\&s-\/>out1))));}
+\DoxyCodeLine{126                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{128             \textcolor{keywordflow}{case} \textcolor{charliteral}{'*'}: \textcolor{comment}{// zero or more}}
+\DoxyCodeLine{129                 e = pop(stack);}
+\DoxyCodeLine{130 }
+\DoxyCodeLine{131                 s = create\_state(Split, e.start, NULL);}
+\DoxyCodeLine{132                 g\_nstate += 1;}
+\DoxyCodeLine{133 }
+\DoxyCodeLine{134                 \mbox{\hyperlink{ptrlist_8h_a29f3679969d9fba856a03eb6e5d571e1}{patch}}(e.out, s);}
+\DoxyCodeLine{135                 l = \mbox{\hyperlink{ptrlist_8h_a916360e2ee72e5a69a2cc056a983fb27}{list1}}(\&s-\/>out1);}
+\DoxyCodeLine{136                 allLists[listPos++] = l;}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138                 push(stack, create\_frag(s, l));}
+\DoxyCodeLine{139                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{140 }
+\DoxyCodeLine{141             \textcolor{keywordflow}{case} \textcolor{charliteral}{'+'}: \textcolor{comment}{// one or more}}
+\DoxyCodeLine{142                 e = pop(stack);}
+\DoxyCodeLine{143 }
+\DoxyCodeLine{144                 s = create\_state(Split, e.start, NULL);}
+\DoxyCodeLine{145                 g\_nstate += 1;}
+\DoxyCodeLine{146 }
+\DoxyCodeLine{147                 \mbox{\hyperlink{ptrlist_8h_a29f3679969d9fba856a03eb6e5d571e1}{patch}}(e.out, s);}
+\DoxyCodeLine{148                 l = \mbox{\hyperlink{ptrlist_8h_a916360e2ee72e5a69a2cc056a983fb27}{list1}}(\&s-\/>out1);}
+\DoxyCodeLine{149                 allLists[listPos++] = l;}
+\DoxyCodeLine{150 }
+\DoxyCodeLine{151                 push(stack, create\_frag(e.start, l));}
+\DoxyCodeLine{152                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{153         \}}
+\DoxyCodeLine{154     \}}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{156     e = pop(stack);}
+\DoxyCodeLine{157 }
+\DoxyCodeLine{158     \mbox{\hyperlink{ptrlist_8h_a29f3679969d9fba856a03eb6e5d571e1}{patch}}(e.out, create\_state(Match, NULL, NULL));}
+\DoxyCodeLine{159     g\_nstate++;}
+\DoxyCodeLine{160 }
+\DoxyCodeLine{161     \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < listPos; i++) \{}
+\DoxyCodeLine{162         \mbox{\hyperlink{ptrlist_8h_abbdb87f0b99884d250f475f5344c67b2}{freePtrlist}}(allLists[i]);}
+\DoxyCodeLine{163     \}}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165     \textcolor{keywordflow}{return} e.start;}
+\DoxyCodeLine{166 \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{NFA_8h_a7295d8d61910c884e85c91131e3072ab}\label{NFA_8h_a7295d8d61910c884e85c91131e3072ab}} 
+\index{NFA.h@{NFA.h}!startdstate@{startdstate}}
+\index{startdstate@{startdstate}!NFA.h@{NFA.h}}
+\doxysubsubsection{\texorpdfstring{startdstate()}{startdstate()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structDState}{DState}}$\ast$ startdstate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structState}{State}} $\ast$}]{start }\end{DoxyParamCaption})}
+
+
+
+Converte uma NFA em uma DFA. 
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em start} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+DState$\ast$ 
+\end{DoxyReturn}
+
+
+Definição na linha 335 do arquivo NFA.\+c.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{335                                   \{}
+\DoxyCodeLine{336     \textcolor{keywordflow}{if} (start == NULL) \{}
+\DoxyCodeLine{337         printf(\textcolor{stringliteral}{"{}Error: start state is NULL\(\backslash\)n"{}});}
+\DoxyCodeLine{338         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{339     \}}
+\DoxyCodeLine{340     alldstates = NULL;}
+\DoxyCodeLine{341     \textcolor{keywordflow}{return} dstate(startlist(start, \&g\_l1));}
+\DoxyCodeLine{342 \}}
+
+\end{DoxyCode}

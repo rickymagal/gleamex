@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Gleamex: Código-Fonte de src/regex.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Gleamex
+   &#160;<span id="projectnumber">v0.0.1</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Gerado por Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Busca','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Busca');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">regex.c</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;../include/regex.h&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
+<div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="structRegex.html">    5</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structRegex.html">Regex</a> {</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keywordtype">char</span> pattern[MAX_REGEX_LENGTH];</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;};</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="regex_8h.html#accf0106ccb350c43fa80447f55f1c0c3">    9</a></span>&#160;<a class="code" href="structRegex.html">Regex</a>* <a class="code" href="regex_8h.html#accf0106ccb350c43fa80447f55f1c0c3">createRegex</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *pattern) {</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keywordflow">if</span> (pattern == NULL || strlen(pattern) &gt;= MAX_REGEX_LENGTH) {</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <span class="keywordflow">return</span> NULL;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    }</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <a class="code" href="structRegex.html">Regex</a> *regex = (<a class="code" href="structRegex.html">Regex</a> *)malloc(<span class="keyword">sizeof</span>(<a class="code" href="structRegex.html">Regex</a>));</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordflow">if</span> (regex != NULL) {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        strncpy(regex-&gt;pattern, pattern, MAX_REGEX_LENGTH - 1);</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        regex-&gt;pattern[MAX_REGEX_LENGTH - 1] = <span class="charliteral">&#39;\0&#39;</span>; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    }</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordflow">return</span> regex;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="regex_8h.html#aeba4dd39ba9653bbf2f2341552fc2a6c">   22</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="regex_8h.html#aeba4dd39ba9653bbf2f2341552fc2a6c">freeRegex</a>(<a class="code" href="structRegex.html">Regex</a> *regex) {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    free(regex);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;}</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="regex_8h.html#ad359032c6949a13d12dcea6d65064206">   26</a></span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="regex_8h.html#ad359032c6949a13d12dcea6d65064206">getRegexPattern</a>(<span class="keyword">const</span> <a class="code" href="structRegex.html">Regex</a> *regex) {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">return</span> regex-&gt;pattern;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
+<div class="ttc" id="aregex_8h_html_accf0106ccb350c43fa80447f55f1c0c3"><div class="ttname"><a href="regex_8h.html#accf0106ccb350c43fa80447f55f1c0c3">createRegex</a></div><div class="ttdeci">Regex * createRegex(const char *pattern)</div><div class="ttdoc">Cria uma struct Regex para validar se uma string de regex dada é válida Se a string da regex dada for...</div><div class="ttdef"><b>Definition:</b> <a href="regex_8c_source.html#l00009">regex.c:9</a></div></div>
+<div class="ttc" id="aregex_8h_html_ad359032c6949a13d12dcea6d65064206"><div class="ttname"><a href="regex_8h.html#ad359032c6949a13d12dcea6d65064206">getRegexPattern</a></div><div class="ttdeci">const char * getRegexPattern(const Regex *regex)</div><div class="ttdoc">Retorna qual a string da regex que uma struct Regex representa.</div><div class="ttdef"><b>Definition:</b> <a href="regex_8c_source.html#l00026">regex.c:26</a></div></div>
+<div class="ttc" id="aregex_8h_html_aeba4dd39ba9653bbf2f2341552fc2a6c"><div class="ttname"><a href="regex_8h.html#aeba4dd39ba9653bbf2f2341552fc2a6c">freeRegex</a></div><div class="ttdeci">void freeRegex(Regex *regex)</div><div class="ttdoc">Libera a memória de ums struct Regex.</div><div class="ttdef"><b>Definition:</b> <a href="regex_8c_source.html#l00022">regex.c:22</a></div></div>
+<div class="ttc" id="astructRegex_html"><div class="ttname"><a href="structRegex.html">Regex</a></div><div class="ttdef"><b>Definition:</b> <a href="regex_8c_source.html#l00005">regex.c:5</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Gerado por&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>
