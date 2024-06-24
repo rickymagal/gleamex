@@ -45,14 +45,11 @@ def main():
         times_dfa.append(time_dfa)
         
         print(f"n = {n}: RE time = {time_re:.6f}s, DFA time = {time_dfa:.6f}s")
-
-    re_times_s = [time * 1000 for time in times_re]
-    dfa_times_s = [time * 1000 for time in times_dfa]
     
     # Plotting results
     plt.figure(figsize=(10, 6))
-    plt.plot(ns, re_times_s, marker='o', linestyle='-', color='b', label='re (Python stdlib)')
-    plt.plot(ns, dfa_times_s, marker='s', linestyle='--', color='r', label='Gleamex')
+    plt.plot(ns, times_re, marker='o', linestyle='-', color='b', label='re (Python stdlib)')
+    plt.plot(ns, times_dfa, marker='s', linestyle='--', color='r', label='Gleamex')
     plt.title('Time to match $a?^{n}a^{n}$ (regex) against $a^{n}$ (string)')
     plt.xlabel('n')
     plt.ylabel('Time (seconds)')
