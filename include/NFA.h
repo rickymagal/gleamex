@@ -86,4 +86,10 @@ bool match_dfa(DState *start, char *s);
  */
 void free_DFA(DState *d);
 
+
+// Tests
+
+bool test_match_dfa(const char *regex_pattern, const char *test_string);
+bool test_match_nfa(const char *regex_pattern, const char *test_string);
+
 #endif

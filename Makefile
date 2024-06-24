@@ -1,47 +1,44 @@
-# Makefile para compilar o main de NFA.c e suas dependências
+CC = gcc
+CFLAGS = -Wall -std=c99 -Iinclude
+LDFLAGS = -lm
 
-# Definição de compilador e flags
-CC=gcc
-CFLAGS=-Wall -Wextra -Werror -pedantic -Iinclude -g
+# Diretório dos objetos compilados
+OBJ_DIR = obj
 
-# Diretório para arquivos objeto
-OBJDIR=obj
+# Diretório dos binários
+BIN_DIR = bin
 
-# Lista de arquivos objeto
-OBJS=$(OBJDIR)/NFA.o $(OBJDIR)/ptrlist.o $(OBJDIR)/regex.o $(OBJDIR)/lexer.o $(OBJDIR)/parser.o
+# Lista de fontes
+SOURCES = src/NFA.c src/lexer.c src/parser.c src/ptrlist.c src/regex.c
 
-# Regra padrão: compilar o executável main
-all: main
+# Objetos gerados
+OBJECTS = $(patsubst src/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
 
-# Regra para compilar main a partir de NFA.c (assumindo que main está em NFA.c)
-main: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o main
+# Executáveis
+EXEC_DFA = $(BIN_DIR)/test_match_dfa_exec
+EXEC_NFA = $(BIN_DIR)/test_match_nfa_exec
 
-# Regra para compilar NFA.c
-$(OBJDIR)/NFA.o: src/NFA.c include/NFA.h | $(OBJDIR)
-	$(CC) $(CFLAGS) -c src/NFA.c -o $(OBJDIR)/NFA.o
+# Regras
+all: $(EXEC_DFA) $(EXEC_NFA)
 
-# Regras para os outros arquivos objeto
-$(OBJDIR)/ptrlist.o: src/ptrlist.c include/ptrlist.h | $(OBJDIR)
-	$(CC) $(CFLAGS) -c src/ptrlist.c -o $(OBJDIR)/ptrlist.o
+$(EXEC_DFA): tests/dev_stage_tests/test_DFA_correctness.c $(OBJECTS)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(OBJECTS) -o $@
 
-$(OBJDIR)/regex.o: src/regex.c include/regex.h | $(OBJDIR)
-	$(CC) $(CFLAGS) -c src/regex.c -o $(OBJDIR)/regex.o
+$(EXEC_NFA): tests/dev_stage_tests/test_NFA_correctness.c $(OBJECTS)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(OBJECTS) -o $@
 
-$(OBJDIR)/lexer.o: src/lexer.c include/lexer.h | $(OBJDIR)
-	$(CC) $(CFLAGS) -c src/lexer.c -o $(OBJDIR)/lexer.o
+# Compilação dos objetos
+$(OBJ_DIR)/%.o: src/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/parser.o: src/parser.c include/parser.h | $(OBJDIR)
-	$(CC) $(CFLAGS) -c src/parser.c -o $(OBJDIR)/parser.o
+# Regra para executar os testes
+test: $(EXEC_DFA) $(EXEC_NFA)
+	python3 tests/pytest/test_correctness.py
 
-# Regra para criar o diretório obj, se não existir
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
-
-# Regra para limpar os arquivos objeto e o executável
 clean:
-	rm -rf $(OBJDIR) main
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
-# Phony target para evitar conflitos com arquivos de mesmo nome
-.PHONY: clean
-
+.PHONY: all test clean
