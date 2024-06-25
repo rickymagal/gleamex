@@ -1,4 +1,4 @@
-#include "NFA.h"
+#include "Gleamex.h"
 #include <stdlib.h>
 #include <stdio.h>
 

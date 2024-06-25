@@ -393,87 +393,8 @@ void free_DFA(DState *start_dfa) {
     }
 }
 
-////////////////////////////////////////////////////////// Tests //////////////////////////////////////////////////////////
 
-bool match(const char *regex_pattern, const char *test_string) {
-    // Criar a regex
-    Regex *regex = createRegex(regex_pattern);
-    if (regex == NULL) {
-        fprintf(stderr, "Erro ao criar o objeto Regex com o padrão: %s\n", regex_pattern);
-        return false;
-    }
-
-    // Converter para postfix
-    char *postfix = re2post(regex);
-    if (postfix == NULL) {
-        fprintf(stderr, "Erro ao converter o padrão de regex para postfix: %s\n", regex_pattern);
-        freeRegex(regex);
-        return false;
-    }
-
-    // Construir o NFA
-    State *start_nfa = post2nfa(postfix);
-    if (start_nfa == NULL) {
-        fprintf(stderr, "Erro ao construir NFA a partir do postfix: %s\n", postfix);
-        free(postfix);
-        freeRegex(regex);
-        return false;
-    }
-
-    // Construir o DFA
-    DState *start_dfa = startdstate(start_nfa);
-    if (start_dfa == NULL) {
-        fprintf(stderr, "Erro ao construir DFA a partir do NFA\n");
-        freeNFA(start_nfa);
-        free(postfix);
-        freeRegex(regex);
-        return false;
-    }
-
-    // Executar o DFA match
-    bool match_result = match_dfa(start_dfa, (char *)test_string);
-
-    // Liberar memória
-    freeNFA(start_nfa);
-    free_DFA(start_dfa);
-    free(postfix);
-    freeRegex(regex);
-    freeList(g_l1);
-    freeList(g_l2);
-    return match_result;
-}
-
-bool search(const char *regex_pattern, const char *test_string, int first, int last) {
-    // Validate indices
-    int test_length = strlen(test_string);
-    if (first < 0 || last > test_length || first > last) {
-        fprintf(stderr, "Invalid indices: first=%d, last=%d, test_length=%d\n", first, last, test_length);
-        return false;
-    }
-
-    // Calculate the length of the substring
-    int substring_length = last - first;
-
-    // Allocate memory for the substring
-    char *search_string = (char *)malloc((substring_length + 1) * sizeof(char));
-    if (search_string == NULL) {
-        fprintf(stderr, "Error allocating memory for the substring\n");
-        return false;
-    }
-
-    // Copy the substring
-    strncpy(search_string, test_string + first, substring_length);
-    search_string[substring_length] = '\0';  // Add null terminator
-
-    // Call the match function
-    bool match_result = match(regex_pattern, search_string);
-
-    // Free the allocated memory
-    free(search_string);
-
-    return match_result;
-}
-
+////////////////////////////////////////////////////////// Tests /////////////////////////////////////////////////////////
 
 bool test_match_dfa(const char *regex_pattern, const char *test_string) {
     // Criar a regex

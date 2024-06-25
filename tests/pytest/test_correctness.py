@@ -3,9 +3,9 @@ import os
 import pytest
 
 # Diretórios e caminhos dos executáveis
-BIN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../bin"))
-EXEC_DFA_PATH = os.path.join(BIN_DIR, "test_match_dfa_exec")
-EXEC_NFA_PATH = os.path.join(BIN_DIR, "test_match_nfa_exec")
+BIN_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../bin_tests"))
+EXEC_DFA_PATH = os.path.join(BIN_DIR, "test_match_dfa")
+EXEC_NFA_PATH = os.path.join(BIN_DIR, "test_match_nfa")
 
 # Função para executar o teste do DFA
 def run_test_match_dfa(regex_pattern, test_string):
