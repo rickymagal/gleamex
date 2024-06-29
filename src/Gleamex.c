@@ -1,5 +1,5 @@
-#include "NFA.h"
-#include "Gleamex.h"
+#include "../include/NFA.h"
+#include "../include/Gleamex.h"
 #include <stdlib.h>
 #include <string.h>
 
