@@ -16,7 +16,7 @@ SRC=$(wildcard $(SRC_DIR)/*.c)
 OBJ=$(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # Target shared library
-TARGET_LIB=_build/gleamex.so
+TARGET_LIB=_build/gleamex_nif.so
 
 # Main target
 $(TARGET_LIB): $(OBJ)

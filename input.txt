@@ -1,0 +1,3 @@
+%Entrada para teste. Rodando o código em c direto do erlang
+l(gleamexnif).
+gleamexnif:match(<<"(a|b)*c">>,<<"ababac">>).
