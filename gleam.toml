@@ -1,0 +1,7 @@
+name = "gleamex"
+version = "0.1.0"
+description = "Regex Lib for Gleam"
+licenses = ["MIT"]
+
+[dependencies]
+gleam_stdlib = "0.38.0"

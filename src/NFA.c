@@ -188,7 +188,7 @@ void freeNFA(State *NFA) {
 
 List* startlist(State *s, List *l);
 void addstate(List *l, State *s);
-void step(List *clist, int c, List *nlist);
+void liststep(List *clist, int c, List *nlist);
 int ismatch(List *l);
 
 List* startlist(State *s, List *l) {
@@ -232,7 +232,7 @@ void addstate(List *l, State *s) {
     l->s[l->n++] = s;
 }
 
-void step(List *clist, int c, List *nlist)
+void liststep(List *clist, int c, List *nlist)
 {
 	int i;
 	State *s;
@@ -341,7 +341,7 @@ DState* startdstate(State *start) {
 }
 
 DState* nextstate(DState *d, int c) {
-    step(&d->l, c, &g_l1);
+    liststep(&d->l, c, &g_l1);
     DState *new_state = dstate(&g_l1);
     if (new_state == NULL) {
         printf("Error: Failed to create new DFA state for character %c\n", c);

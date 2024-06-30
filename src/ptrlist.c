@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "ptrlist.h"
+#include "../include/ptrlist.h"
 
 // Define the Ptrlist structure
 struct Ptrlist {
