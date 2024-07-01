@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Gleamex: stdlib</title>
+<title>Gleamex: Gleamex</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -63,29 +63,46 @@ $(function() {
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">stdlib </div>  </div>
+<div class="title">Gleamex </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_examples_build_packages_gleam_stdlib_README"></a> <a href="https://github.com/gleam-lang/stdlib/releases"><img src="https://img.shields.io/github/release/gleam-lang/stdlib" alt="GitHub release" class="inline"/></a> <a href="https://discord.gg/Fm8Pwmy"><img src="https://img.shields.io/discord/768594524158427167?color=blue" alt="Discord chat" class="inline"/></a> <img src="https://github.com/gleam-lang/stdlib/workflows/CI/badge.svg?branch=main" alt="CI" style="pointer-events: none;" class="inline"/></p>
-<p>Gleam's standard library! Documentation available on <a href="https://hexdocs.pm/gleam_stdlib/">HexDocs</a>.</p>
+<div class="textblock"><p><a class="anchor" id="md_README"></a> <a class="el" href="structRegex.html">Regex</a> Library for Gleam</p>
+<p>Gleamex é uma biblioteca para a linguagem Gleam que se propõe a fornecer suporte a expressões regulares à linguagem.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
-Installation</h1>
-<p>Add <code>gleam_stdlib</code> to your Gleam project.</p>
-<div class="fragment"><div class="line">gleam add gleam_stdlib</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md2"></a>
-Usage</h1>
-<p>Import the modules you want to use and write some code!</p>
-<div class="fragment"><div class="line">import gleam/string</div>
-<div class="line"> </div>
-<div class="line">pub fn greet(name: String) -&gt; String {</div>
-<div class="line">  string.concat([&quot;Hello &quot;, name, &quot;!&quot;])</div>
-<div class="line">}</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md3"></a>
-Targets</h1>
-<p>Gleam's standard library supports both targets: Erlang and JavaScript.</p>
-<h2><a class="anchor" id="autotoc_md4"></a>
-Compatibility</h2>
-<p>This library is compatible with all versions of Erlang/OTP, NodeJS, and major browsers that are currently supported by their maintainers. If you have a compatibility issue with any platform open an issue and we'll see what we can do to help. </p>
+Instalação</h1>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Dependências</h2>
+<p>A biblioteca Gleamex foi testada na versão 1.2.1 do Gleam, logo se recomenda que seja usada essa versão.</p>
+<p>Para a instalação do Gleam, acesse a documentação oficial: <a href="https://gleam.run/getting-started/installing/">Link</a></p>
+<p>Para realizar o build da biblioteca, é necessário ter as seguintes dependências:</p><ul>
+<li>GCC</li>
+<li>make</li>
+</ul>
+<p>No Ubuntu, é possível instala-las com o seguinte comando: </p><div class="fragment"><div class="line">sudo apt-get update &amp;&amp; sudo apt-get install gcc make -y</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md3"></a>
+Dependências do gleam</h2>
+<div class="fragment"><div class="line">gleam_stdlib = &quot;0.38.0&quot;</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md4"></a>
+Dependências para os testes unitários (opcional)</h2>
+<p>Os testes unitários do Gleamex foram implementados em Pytest. Para executa-los, é necessário ter instalado o Python 3.11 e as seguites dependências:</p>
+<div class="fragment"><div class="line">matplotlib==3.9.0</div>
+<div class="line">pytest==7.4.3</div>
+</div><!-- fragment --><p>Aviso: Outras versões do Python e das dependências dos testes não foram testadas.</p>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Build da biblioteca Gleamex</h2>
+<div class="fragment"><div class="line">cd gleamex</div>
+</div><!-- fragment --><div class="fragment"><div class="line">make</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
+Problema com "erl_nif.h"</h2>
+<p>Caso haja problemas com o #include "erl_nif.h" durante a compilação, acesse o arquivo <em>Makefile</em> e modifique a linha 13 ERLANG_INCLUDE_DIR.</p>
+<p>Rode o seguinte comando:</p>
+<div class="fragment"><div class="line">find /home -name erl_nif.h</div>
+</div><!-- fragment --><p> Copie o caminho terminado em <em>usr/include/erl_nif.h</em> e substitua <em>apenas</em> o caminho da pasta (só até o include) no comando a seguir como no exemplo para adicionar o arquivo no PATH:</p>
+<p>Exemplo </p><div class="fragment"><div class="line">echo &#39;export C_INCLUDE_PATH=/home/linuxbrew/.linuxbrew/Cellar/erlang/26.2.5/lib/erlang/usr/include&#39; &gt;&gt; ~/.bashrc</div>
+<div class="line">source ~/.bashrc</div>
+</div><!-- fragment --><p> Comando </p><div class="fragment"><div class="line">echo &#39;export C_INCLUDE_PATH=SUBSTITUA_AQUI&#39; &gt;&gt; ~/.bashrc</div>
+<div class="line">source ~/.bashrc</div>
+</div><!-- fragment --><p>Após esse passo, tente novamente executar o comando Make. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
