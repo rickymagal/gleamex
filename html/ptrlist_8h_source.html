@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Gleamex: Código-Fonte de include/ptrlist.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">Gleamex
+   &#160;<span id="projectnumber">v0.0.1</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Gerado por Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Busca','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Busca');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">ptrlist.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="ptrlist_8h.html">Vá para a documentação desse arquivo.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="ptrlist_8h.html#a985a2dc6bf4b41f7d5a4dd5fce87f4d9">    1</a></span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#ifndef PTRLIST_H</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#define PTRLIST_H</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="NFA_8h.html">NFA.h</a>&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structState.html">State</a> <a class="code" href="structState.html">State</a>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structPtrlist.html">Ptrlist</a> <a class="code" href="structPtrlist.html">Ptrlist</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<a class="code" href="structPtrlist.html">Ptrlist</a> *<a class="code" href="ptrlist_8h.html#a916360e2ee72e5a69a2cc056a983fb27">list1</a>(<a class="code" href="structState.html">State</a> **outp);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<a class="code" href="structPtrlist.html">Ptrlist</a> *<a class="code" href="ptrlist_8h.html#a09c913ffa972c186b35e79965c08d8df">append</a>(<a class="code" href="structPtrlist.html">Ptrlist</a> *l1, <a class="code" href="structPtrlist.html">Ptrlist</a> *l2);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">void</span> <a class="code" href="ptrlist_8h.html#a29f3679969d9fba856a03eb6e5d571e1">patch</a>(<a class="code" href="structPtrlist.html">Ptrlist</a> *l, <a class="code" href="structState.html">State</a> *s);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">void</span> <a class="code" href="ptrlist_8h.html#abbdb87f0b99884d250f475f5344c67b2">freePtrlist</a>(<a class="code" href="structPtrlist.html">Ptrlist</a> *l);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aNFA_8h_html"><div class="ttname"><a href="NFA_8h.html">NFA.h</a></div><div class="ttdoc">Fornece as funções da NFA e da DFA A NFA (nondeterministic finite automata) e a DFA (deterministic fi...</div></div>
+<div class="ttc" id="aptrlist_8h_html_a09c913ffa972c186b35e79965c08d8df"><div class="ttname"><a href="ptrlist_8h.html#a09c913ffa972c186b35e79965c08d8df">append</a></div><div class="ttdeci">Ptrlist * append(Ptrlist *l1, Ptrlist *l2)</div><div class="ttdoc">Concatena dois Ptrlist e retorna o novo Ptrlist concatenado.</div><div class="ttdef"><b>Definition:</b> <a href="ptrlist_8c_source.html#l00022">ptrlist.c:22</a></div></div>
+<div class="ttc" id="aptrlist_8h_html_a29f3679969d9fba856a03eb6e5d571e1"><div class="ttname"><a href="ptrlist_8h.html#a29f3679969d9fba856a03eb6e5d571e1">patch</a></div><div class="ttdeci">void patch(Ptrlist *l, State *s)</div><div class="ttdoc">Adiciona um novo State (pushback) na Ptrlist.</div><div class="ttdef"><b>Definition:</b> <a href="ptrlist_8c_source.html#l00037">ptrlist.c:37</a></div></div>
+<div class="ttc" id="aptrlist_8h_html_a916360e2ee72e5a69a2cc056a983fb27"><div class="ttname"><a href="ptrlist_8h.html#a916360e2ee72e5a69a2cc056a983fb27">list1</a></div><div class="ttdeci">Ptrlist * list1(State **outp)</div><div class="ttdoc">Cria uma lista de ponteiros para States com um item inicial.</div><div class="ttdef"><b>Definition:</b> <a href="ptrlist_8c_source.html#l00011">ptrlist.c:11</a></div></div>
+<div class="ttc" id="aptrlist_8h_html_abbdb87f0b99884d250f475f5344c67b2"><div class="ttname"><a href="ptrlist_8h.html#abbdb87f0b99884d250f475f5344c67b2">freePtrlist</a></div><div class="ttdeci">void freePtrlist(Ptrlist *l)</div><div class="ttdoc">Libera a memória alocada para um Ptrlist.</div><div class="ttdef"><b>Definition:</b> <a href="ptrlist_8c_source.html#l00044">ptrlist.c:44</a></div></div>
+<div class="ttc" id="astructPtrlist_html"><div class="ttname"><a href="structPtrlist.html">Ptrlist</a></div><div class="ttdef"><b>Definition:</b> <a href="ptrlist_8c_source.html#l00005">ptrlist.c:5</a></div></div>
+<div class="ttc" id="astructState_html"><div class="ttname"><a href="structState.html">State</a></div><div class="ttdef"><b>Definition:</b> <a href="NFA_8c_source.html#l00018">NFA.c:18</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Gerado por&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>
