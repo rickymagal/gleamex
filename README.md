@@ -113,9 +113,9 @@ let match_result = gleamex.match(regex_pattern, test_string)
 
 Para usar a função search, os parâmetros de entrada são os seguintes:
 
-* A strign da regex. 
+* A string da regex. 
 * String que se deseja realizar a busca. 
-* O index do limite inferiro da busca (incluindo o próprio)
+* O index do limite inferior da busca (incluindo o próprio)
 * O index do limite superior da busca (excluindo o próprio)
 
 E o retorno é o seguinte:
@@ -134,4 +134,4 @@ let search_result = gleamex.search(regex_pattern, test_string, start_index, end_
 
 ## Documentação completa
 
-[link]()
+[link](https://rickymagal.github.io/gleamex/)
